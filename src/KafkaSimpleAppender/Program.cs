@@ -9,6 +9,7 @@ using Serilog;
 
 using Logic.Configuration;
 using Logic.Configuration.Validation;
+using Logic;
 
 // It is unfortunate but we have to set it to Unknown first.
 Thread.CurrentThread.SetApartmentState(ApartmentState.Unknown);
@@ -26,6 +27,7 @@ var builder = new HostBuilder()
   .ConfigureServices((hostContext, services) =>
   {
       services.AddScoped<KafkaSimpleAppender.UI>();
+      services.AddSingleton<IKafkaSender, KafkaSender>();
       services.Configure<BootstrapConfiguration>(hostContext.Configuration.GetSection(nameof(BootstrapConfiguration)));
       services.AddSingleton<IValidateOptions<BootstrapConfiguration>, BootstrapConfigurationValidator>();
 
