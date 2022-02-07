@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 
+using Confluent.Kafka;
+
 using Logic.Configuration;
 using Models;
 
@@ -14,14 +16,21 @@ namespace Logic
                 throw new ArgumentNullException(nameof(config));
             }
 
-            _config = config.Value;
+            _config = new ProducerConfig { BootstrapServers = string.Join(',', config.Value.BootstrapServers) };
         }
 
-        public Task SendAsync(Topic topic, Message message, CancellationToken ct)
+        public async Task SendAsync(Topic topic, Message message, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            using var p = new ProducerBuilder<string, string>(_config).Build();
+            var dr = await p.ProduceAsync(topic.Name, new Message<string, string>
+            {
+                Key = message.Key,
+                Value = message.Value
+            }
+            , ct)
+            .ConfigureAwait(false);
         }
 
-        private readonly BootstrapConfiguration _config;
+        private readonly ProducerConfig _config;
     }
 }
