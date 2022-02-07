@@ -35,6 +35,8 @@
             this.lbTopic = new System.Windows.Forms.Label();
             this.tbTopic = new System.Windows.Forms.TextBox();
             this.bSend = new System.Windows.Forms.Button();
+            this.tbKeyType = new System.Windows.Forms.Label();
+            this.cbTypes = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // lbKey
@@ -84,7 +86,7 @@
             // 
             this.tbTopic.Location = new System.Drawing.Point(70, 12);
             this.tbTopic.Name = "tbTopic";
-            this.tbTopic.Size = new System.Drawing.Size(488, 23);
+            this.tbTopic.Size = new System.Drawing.Size(296, 23);
             this.tbTopic.TabIndex = 9;
             // 
             // bSend
@@ -97,11 +99,32 @@
             this.bSend.UseVisualStyleBackColor = true;
             this.bSend.Click += new System.EventHandler(this.bSend_Click);
             // 
+            // tbKeyType
+            // 
+            this.tbKeyType.AutoSize = true;
+            this.tbKeyType.Location = new System.Drawing.Point(372, 15);
+            this.tbKeyType.Name = "tbKeyType";
+            this.tbKeyType.Size = new System.Drawing.Size(52, 15);
+            this.tbKeyType.TabIndex = 11;
+            this.tbKeyType.Text = "Key type";
+            // 
+            // cbTypes
+            // 
+            this.cbTypes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbTypes.FormattingEnabled = true;
+            this.cbTypes.Location = new System.Drawing.Point(430, 12);
+            this.cbTypes.Name = "cbTypes";
+            this.cbTypes.Size = new System.Drawing.Size(128, 23);
+            this.cbTypes.TabIndex = 12;
+            this.cbTypes.SelectedIndexChanged += new System.EventHandler(this.cbTypes_SelectedIndexChanged);
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 434);
+            this.Controls.Add(this.cbTypes);
+            this.Controls.Add(this.tbKeyType);
             this.Controls.Add(this.bSend);
             this.Controls.Add(this.tbTopic);
             this.Controls.Add(this.lbTopic);
@@ -126,5 +149,7 @@
         private Label lbTopic;
         private TextBox tbTopic;
         private Button bSend;
+        private Label tbKeyType;
+        private ComboBox cbTypes;
     }
 }

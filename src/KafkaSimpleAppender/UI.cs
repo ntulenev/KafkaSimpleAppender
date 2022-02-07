@@ -10,6 +10,8 @@ namespace KafkaSimpleAppender
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
 
             InitializeComponent();
+
+            cbTypes.DataSource = Enum.GetValues(typeof(KeyType));
         }
 
         private readonly IKafkaSender _sender;
@@ -22,10 +24,7 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                var topic = new Topic(tbTopic.Text);
-                var message = new Models.Message<string>(tbKey.Text, tbMessage.Text);
-
-                await _sender.SendAsync(topic, message, CancellationToken.None);
+                await SendDataAsync();
 
                 Clear();
 
@@ -55,6 +54,54 @@ namespace KafkaSimpleAppender
         {
             tbKey.Clear();
             tbMessage.Clear();
+        }
+
+        private async Task SendDataAsync()
+        {
+            var topic = new Topic(tbTopic.Text);
+
+            switch ((KeyType)cbTypes.SelectedItem)
+            {
+                case KeyType.StringKey:
+                    {
+                        var message = new Models.Message<string>(tbKey.Text, tbMessage.Text);
+                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        break;
+                    }
+                case KeyType.LongKey:
+                    {
+                        var message = new Models.Message<long>(long.Parse(tbKey.Text), tbMessage.Text);
+                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        break;
+                    }
+                case KeyType.NoKey:
+                    {
+                        var message = new Models.Message<object>(null!, tbMessage.Text);
+                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        break;
+                    }
+                default: throw new ArgumentOutOfRangeException(nameof(cbTypes.SelectedItem));
+            }
+        }
+
+#pragma warning disable IDE1006 // Naming Styles
+        private void cbTypes_SelectedIndexChanged(object sender, EventArgs e)
+#pragma warning restore IDE1006 // Naming Styles
+        {
+            CheckMessageTypeUI();
+        }
+
+        private void CheckMessageTypeUI()
+        {
+            if ((KeyType)cbTypes.SelectedItem == KeyType.NoKey)
+            {
+                tbKey.Clear();
+                tbKey.Enabled = false;
+            }
+            else
+            {
+                tbKey.Enabled = true;
+            }
         }
     }
 }
