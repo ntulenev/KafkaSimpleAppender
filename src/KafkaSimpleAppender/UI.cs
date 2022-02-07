@@ -23,7 +23,7 @@ namespace KafkaSimpleAppender
                 DisableUI();
 
                 var topic = new Topic(tbTopic.Text);
-                var message = new Models.Message(tbKey.Text, tbMessage.Text);
+                var message = new Models.Message<string>(tbKey.Text, tbMessage.Text);
 
                 await _sender.SendAsync(topic, message, CancellationToken.None);
 

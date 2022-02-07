@@ -19,10 +19,10 @@ namespace Logic
             _config = new ProducerConfig { BootstrapServers = string.Join(',', config.Value.BootstrapServers) };
         }
 
-        public async Task SendAsync(Topic topic, Message message, CancellationToken ct)
+        public async Task SendAsync<TKey>(Topic topic, Message<TKey> message, CancellationToken ct)
         {
-            using var p = new ProducerBuilder<string, string>(_config).Build();
-            var dr = await p.ProduceAsync(topic.Name, new Message<string, string>
+            using var p = new ProducerBuilder<TKey, string>(_config).Build();
+            var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
             {
                 Key = message.Key,
                 Value = message.Value
