@@ -1,4 +1,5 @@
 ﻿using Logic;
+using Models;
 
 namespace KafkaSimpleAppender
 {
@@ -15,7 +16,17 @@ namespace KafkaSimpleAppender
 
         private async void bSend_Click(object sender, EventArgs e)
         {
-            await _sender.SendAsync(new Models.Message("", ""), CancellationToken.None);
+            try
+            {
+                var topic = new Topic(tbTopic.Text);
+                var message = new Models.Message(tbKey.Text, tbMessage.Text);
+
+                await _sender.SendAsync(topic, message, CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }

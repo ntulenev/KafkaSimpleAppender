@@ -17,7 +17,7 @@ namespace Logic
             _config = config.Value;
         }
 
-        public Task SendAsync(Message message, CancellationToken ct)
+        public Task SendAsync(Topic topic, Message message, CancellationToken ct)
         {
             throw new NotImplementedException();
         }

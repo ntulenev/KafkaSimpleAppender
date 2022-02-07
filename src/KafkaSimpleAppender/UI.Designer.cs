@@ -28,38 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lbKeyType = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.lbKey = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+            this.tbKey = new System.Windows.Forms.RichTextBox();
+            this.tbMessage = new System.Windows.Forms.RichTextBox();
             this.lbMessage = new System.Windows.Forms.Label();
             this.lbTopic = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbTopic = new System.Windows.Forms.TextBox();
             this.bSend = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // lbKeyType
-            // 
-            this.lbKeyType.AutoSize = true;
-            this.lbKeyType.Location = new System.Drawing.Point(12, 9);
-            this.lbKeyType.Name = "lbKeyType";
-            this.lbKeyType.Size = new System.Drawing.Size(52, 15);
-            this.lbKeyType.TabIndex = 0;
-            this.lbKeyType.Text = "Key type";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3"});
-            this.comboBox1.Location = new System.Drawing.Point(70, 6);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 23);
-            this.comboBox1.TabIndex = 3;
             // 
             // lbKey
             // 
@@ -70,21 +46,21 @@
             this.lbKey.TabIndex = 4;
             this.lbKey.Text = "Key";
             // 
-            // richTextBox1
+            // tbKey
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(70, 56);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(488, 71);
-            this.richTextBox1.TabIndex = 5;
-            this.richTextBox1.Text = "";
+            this.tbKey.Location = new System.Drawing.Point(70, 56);
+            this.tbKey.Name = "tbKey";
+            this.tbKey.Size = new System.Drawing.Size(488, 71);
+            this.tbKey.TabIndex = 5;
+            this.tbKey.Text = "";
             // 
-            // richTextBox2
+            // tbMessage
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(70, 149);
-            this.richTextBox2.Name = "richTextBox2";
-            this.richTextBox2.Size = new System.Drawing.Size(488, 225);
-            this.richTextBox2.TabIndex = 7;
-            this.richTextBox2.Text = "";
+            this.tbMessage.Location = new System.Drawing.Point(70, 149);
+            this.tbMessage.Name = "tbMessage";
+            this.tbMessage.Size = new System.Drawing.Size(488, 225);
+            this.tbMessage.TabIndex = 7;
+            this.tbMessage.Text = "";
             // 
             // lbMessage
             // 
@@ -98,18 +74,18 @@
             // lbTopic
             // 
             this.lbTopic.AutoSize = true;
-            this.lbTopic.Location = new System.Drawing.Point(209, 9);
+            this.lbTopic.Location = new System.Drawing.Point(12, 15);
             this.lbTopic.Name = "lbTopic";
             this.lbTopic.Size = new System.Drawing.Size(35, 15);
             this.lbTopic.TabIndex = 8;
             this.lbTopic.Text = "Topic";
             // 
-            // textBox1
+            // tbTopic
             // 
-            this.textBox1.Location = new System.Drawing.Point(267, 6);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(291, 23);
-            this.textBox1.TabIndex = 9;
+            this.tbTopic.Location = new System.Drawing.Point(70, 12);
+            this.tbTopic.Name = "tbTopic";
+            this.tbTopic.Size = new System.Drawing.Size(488, 23);
+            this.tbTopic.TabIndex = 9;
             // 
             // bSend
             // 
@@ -127,14 +103,12 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 434);
             this.Controls.Add(this.bSend);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.tbTopic);
             this.Controls.Add(this.lbTopic);
-            this.Controls.Add(this.richTextBox2);
+            this.Controls.Add(this.tbMessage);
             this.Controls.Add(this.lbMessage);
-            this.Controls.Add(this.richTextBox1);
+            this.Controls.Add(this.tbKey);
             this.Controls.Add(this.lbKey);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.lbKeyType);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "UI";
@@ -145,15 +119,12 @@
         }
 
         #endregion
-
-        private Label lbKeyType;
-        private ComboBox comboBox1;
         private Label lbKey;
-        private RichTextBox richTextBox1;
-        private RichTextBox richTextBox2;
+        private RichTextBox tbKey;
+        private RichTextBox tbMessage;
         private Label lbMessage;
         private Label lbTopic;
-        private TextBox textBox1;
+        private TextBox tbTopic;
         private Button bSend;
     }
 }
