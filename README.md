@@ -4,7 +4,7 @@
 
 UI for sending simple messages to Kafka
 
-Current version supports only messages with string keys and string payload.
+Current version supports messages with several key types (string,long and no key) and string payload.
 
 ![Details](Example.png)
 
