@@ -64,19 +64,19 @@ namespace KafkaSimpleAppender
             {
                 case KeyType.StringKey:
                     {
-                        var message = new Models.Message<string>(tbKey.Text, tbMessage.Text);
+                        var message = new Message<string>(tbKey.Text, tbMessage.Text);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }
                 case KeyType.LongKey:
                     {
-                        var message = new Models.Message<long>(long.Parse(tbKey.Text), tbMessage.Text);
+                        var message = new Message<long>(long.Parse(tbKey.Text), tbMessage.Text);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }
                 case KeyType.NoKey:
                     {
-                        var message = new Models.Message<object>(null!, tbMessage.Text);
+                        var message = new Message<object>(null!, tbMessage.Text);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }
