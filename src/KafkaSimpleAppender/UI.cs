@@ -76,7 +76,7 @@ namespace KafkaSimpleAppender
                     }
                 case KeyType.NoKey:
                     {
-                        var message = new Message<object>(null!, tbMessage.Text);
+                        var message = new NoKeyMessage(tbMessage.Text);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }

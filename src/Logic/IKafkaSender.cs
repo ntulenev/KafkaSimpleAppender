@@ -4,6 +4,6 @@ namespace Logic
 {
     public interface IKafkaSender
     {
-        public Task SendAsync<TKey>(Topic topic, Message<TKey> message, CancellationToken ct);
+        public Task SendAsync<TKey>(Topic topic, MessageBase<TKey> message, CancellationToken ct);
     }
 }
