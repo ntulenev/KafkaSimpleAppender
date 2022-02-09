@@ -13,25 +13,25 @@ namespace Logic
             ValidKeyTypes = Enum.GetValues(typeof(KeyType)).Cast<KeyType>().ToList();
         }
 
-        public async Task HandleAsync(string topicName, object keyType, string key, string payload, CancellationToken ct)
+        public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, CancellationToken ct)
         {
             var topic = new Topic(topicName);
 
-            switch ((KeyType)keyType)
+            switch (keyType)
             {
-                case KeyType.StringKey:
+                case KeyType.String:
                     {
                         var message = new Message<string>(key, payload);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }
-                case KeyType.LongKey:
+                case KeyType.Long:
                     {
                         var message = new Message<long>(long.Parse(key), payload);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
                     }
-                case KeyType.NoKey:
+                case KeyType.NotSet:
                     {
                         var message = new NoKeyMessage(payload);
                         await _sender.SendAsync(topic, message, CancellationToken.None);

@@ -20,7 +20,7 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                await _hander.HandleAsync(tbTopic.Text, cbTypes.SelectedItem, tbKey.Text, tbMessage.Text, CancellationToken.None);
+                await _hander.HandleAsync(tbTopic.Text, (KeyType)cbTypes.SelectedItem, tbKey.Text, tbMessage.Text, CancellationToken.None);
 
                 Clear();
 
@@ -61,7 +61,7 @@ namespace KafkaSimpleAppender
 
         private void CheckMessageTypeUI()
         {
-            if ((KeyType)cbTypes.SelectedItem == KeyType.NoKey)
+            if ((KeyType)cbTypes.SelectedItem == KeyType.NotSet)
             {
                 tbKey.Clear();
                 tbKey.Enabled = false;

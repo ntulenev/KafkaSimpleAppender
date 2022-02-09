@@ -2,6 +2,6 @@
 {
     public enum KeyType
     {
-        StringKey, LongKey, NoKey
+        String, Long, NotSet
     }
 }
