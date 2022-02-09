@@ -5,16 +5,12 @@ namespace KafkaSimpleAppender
 {
     public partial class UI : Form
     {
-        public UI(IKafkaSender sender)
+        public UI(IKafkaSendHandler hander)
         {
-            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
-
+            _hander = hander ?? throw new ArgumentNullException(nameof(hander));
             InitializeComponent();
-
-            cbTypes.DataSource = Enum.GetValues(typeof(KeyType));
+            cbTypes.DataSource = _hander.ValidKeyTypes;
         }
-
-        private readonly IKafkaSender _sender;
 
 #pragma warning disable IDE1006 // Naming Styles
         private async void bSend_Click(object sender, EventArgs e)
@@ -24,7 +20,7 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                await SendDataAsync();
+                await _hander.HandleAsync(tbTopic.Text, cbTypes.SelectedItem, tbKey.Text, tbMessage.Text, CancellationToken.None);
 
                 Clear();
 
@@ -38,6 +34,13 @@ namespace KafkaSimpleAppender
             {
                 EnableUI();
             }
+        }
+
+#pragma warning disable IDE1006 // Naming Styles
+        private void cbTypes_SelectedIndexChanged(object sender, EventArgs e)
+#pragma warning restore IDE1006 // Naming Styles
+        {
+            CheckMessageTypeUI();
         }
 
         private void DisableUI()
@@ -56,41 +59,6 @@ namespace KafkaSimpleAppender
             tbMessage.Clear();
         }
 
-        private async Task SendDataAsync()
-        {
-            var topic = new Topic(tbTopic.Text);
-
-            switch ((KeyType)cbTypes.SelectedItem)
-            {
-                case KeyType.StringKey:
-                    {
-                        var message = new Message<string>(tbKey.Text, tbMessage.Text);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
-                        break;
-                    }
-                case KeyType.LongKey:
-                    {
-                        var message = new Message<long>(long.Parse(tbKey.Text), tbMessage.Text);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
-                        break;
-                    }
-                case KeyType.NoKey:
-                    {
-                        var message = new NoKeyMessage(tbMessage.Text);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
-                        break;
-                    }
-                default: throw new ArgumentOutOfRangeException(nameof(cbTypes.SelectedItem));
-            }
-        }
-
-#pragma warning disable IDE1006 // Naming Styles
-        private void cbTypes_SelectedIndexChanged(object sender, EventArgs e)
-#pragma warning restore IDE1006 // Naming Styles
-        {
-            CheckMessageTypeUI();
-        }
-
         private void CheckMessageTypeUI()
         {
             if ((KeyType)cbTypes.SelectedItem == KeyType.NoKey)
@@ -103,5 +71,7 @@ namespace KafkaSimpleAppender
                 tbKey.Enabled = true;
             }
         }
+
+        private readonly IKafkaSendHandler _hander;
     }
 }

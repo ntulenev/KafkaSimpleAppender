@@ -28,6 +28,7 @@ var builder = new HostBuilder()
   {
       services.AddScoped<KafkaSimpleAppender.UI>();
       services.AddSingleton<IKafkaSender, KafkaSender>();
+      services.AddSingleton<IKafkaSendHandler, KafkaSendHandler>();
       services.Configure<BootstrapConfiguration>(hostContext.Configuration.GetSection(nameof(BootstrapConfiguration)));
       services.AddSingleton<IValidateOptions<BootstrapConfiguration>, BootstrapConfigurationValidator>();
 
