@@ -6,9 +6,11 @@ namespace Logic
     {
         public IEnumerable<KeyType> ValidKeyTypes { get; }
 
-        public KafkaSendHandler(IKafkaSender sender)
+        public KafkaSendHandler(IKafkaSender sender,
+                                IJsonValidator validator)
         {
             _sender = sender ?? throw new ArgumentNullException(nameof(sender));
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
 
             ValidKeyTypes = Enum.GetValues(typeof(KeyType)).Cast<KeyType>().ToList();
         }
@@ -21,6 +23,17 @@ namespace Logic
             {
                 case KeyType.String:
                     {
+                        var message = new Message<string>(key, payload);
+                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        break;
+                    }
+                case KeyType.JSON:
+                    {
+                        if (!_validator.IsValid(key))
+                        {
+                            throw new ArgumentException("Message key is not valid json", nameof(key));
+                        }
+
                         var message = new Message<string>(key, payload);
                         await _sender.SendAsync(topic, message, CancellationToken.None);
                         break;
@@ -42,5 +55,6 @@ namespace Logic
         }
 
         private readonly IKafkaSender _sender;
+        private readonly IJsonValidator _validator;
     }
 }
