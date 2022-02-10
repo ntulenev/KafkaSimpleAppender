@@ -15,9 +15,17 @@ namespace Logic
             ValidKeyTypes = Enum.GetValues(typeof(KeyType)).Cast<KeyType>().ToList();
         }
 
-        public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, CancellationToken ct)
+        public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, bool jsonPayload, CancellationToken ct)
         {
             var topic = new Topic(topicName);
+
+            if (jsonPayload)
+            {
+                if (!_validator.IsValid(payload))
+                {
+                    throw new ArgumentException("Message payload is not valid json", nameof(key));
+                }
+            }
 
             switch (keyType)
             {

@@ -38,6 +38,7 @@
             this.bSend = new System.Windows.Forms.Button();
             this.tbKeyType = new System.Windows.Forms.Label();
             this.cbTypes = new System.Windows.Forms.ComboBox();
+            this.cbJson = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // lbKey
@@ -59,20 +60,20 @@
             // 
             // tbMessage
             // 
-            this.tbMessage.Location = new System.Drawing.Point(70, 149);
+            this.tbMessage.Location = new System.Drawing.Point(70, 172);
             this.tbMessage.Name = "tbMessage";
-            this.tbMessage.Size = new System.Drawing.Size(488, 225);
+            this.tbMessage.Size = new System.Drawing.Size(488, 202);
             this.tbMessage.TabIndex = 7;
             this.tbMessage.Text = "";
             // 
             // lbMessage
             // 
             this.lbMessage.AutoSize = true;
-            this.lbMessage.Location = new System.Drawing.Point(12, 149);
+            this.lbMessage.Location = new System.Drawing.Point(12, 146);
             this.lbMessage.Name = "lbMessage";
-            this.lbMessage.Size = new System.Drawing.Size(53, 15);
+            this.lbMessage.Size = new System.Drawing.Size(49, 15);
             this.lbMessage.TabIndex = 6;
-            this.lbMessage.Text = "Message";
+            this.lbMessage.Text = "Payload";
             // 
             // lbTopic
             // 
@@ -119,11 +120,22 @@
             this.cbTypes.TabIndex = 12;
             this.cbTypes.SelectedIndexChanged += new System.EventHandler(this.cbTypes_SelectedIndexChanged);
             // 
+            // cbJson
+            // 
+            this.cbJson.AutoSize = true;
+            this.cbJson.Location = new System.Drawing.Point(70, 145);
+            this.cbJson.Name = "cbJson";
+            this.cbJson.Size = new System.Drawing.Size(112, 19);
+            this.cbJson.TabIndex = 13;
+            this.cbJson.Text = "Validate as JSON";
+            this.cbJson.UseVisualStyleBackColor = true;
+            // 
             // UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(573, 434);
+            this.Controls.Add(this.cbJson);
             this.Controls.Add(this.cbTypes);
             this.Controls.Add(this.tbKeyType);
             this.Controls.Add(this.bSend);
@@ -153,5 +165,6 @@
         private Button bSend;
         private Label tbKeyType;
         private ComboBox cbTypes;
+        private CheckBox cbJson;
     }
 }

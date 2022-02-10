@@ -20,7 +20,12 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                await _hander.HandleAsync(tbTopic.Text, (KeyType)cbTypes.SelectedItem, tbKey.Text, tbMessage.Text, CancellationToken.None);
+                await _hander.HandleAsync(tbTopic.Text, 
+                                          (KeyType)cbTypes.SelectedItem, 
+                                          tbKey.Text, 
+                                          tbMessage.Text,
+                                          cbJson.Checked,
+                                          CancellationToken.None);
 
                 Clear();
 
