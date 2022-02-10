@@ -2,6 +2,6 @@
 {
     public enum KeyType
     {
-        String, Long, NotSet
+        String, JSON, Long, NotSet
     }
 }
