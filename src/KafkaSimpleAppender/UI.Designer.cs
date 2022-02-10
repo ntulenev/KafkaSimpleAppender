@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UI));
             this.lbKey = new System.Windows.Forms.Label();
             this.tbKey = new System.Windows.Forms.RichTextBox();
             this.tbMessage = new System.Windows.Forms.RichTextBox();
@@ -133,6 +134,7 @@
             this.Controls.Add(this.tbKey);
             this.Controls.Add(this.lbKey);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "UI";
             this.Text = "Kafka Simple Appender";
