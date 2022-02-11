@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 using Confluent.Kafka;
 
 using Logic.Configuration;
 using Models;
-using Microsoft.Extensions.Logging;
 
 namespace Logic
 {
