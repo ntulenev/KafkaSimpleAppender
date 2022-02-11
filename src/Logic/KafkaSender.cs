@@ -4,6 +4,7 @@ using Confluent.Kafka;
 
 using Logic.Configuration;
 using Models;
+using Microsoft.Extensions.Logging;
 
 namespace Logic
 {
@@ -17,7 +18,8 @@ namespace Logic
         /// </summary>
         /// <param name="config">Kafka sender configuration.</param>
         /// <exception cref="ArgumentNullException">If config is null.</exception>
-        public KafkaSender(IOptions<BootstrapConfiguration> config)
+        public KafkaSender(IOptions<BootstrapConfiguration> config,
+                           ILogger<KafkaSender> logger)
         {
             if (config is null)
             {
@@ -25,39 +27,74 @@ namespace Logic
             }
 
             _config = new ProducerConfig { BootstrapServers = string.Join(',', config.Value.BootstrapServers) };
+
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _logger.LogDebug("Sender created");
         }
 
         /// <inheritdoc/>
         /// <exception cref="ArgumentException">Throws if message type is not supported.</exception>
         public async Task SendAsync<TKey>(Topic topic, MessageBase<TKey> message, CancellationToken ct)
         {
+            ArgumentNullException.ThrowIfNull(topic);
+            ArgumentNullException.ThrowIfNull(message);
+
             if (message is Message<TKey> keyMessage)
             {
-                using var p = new ProducerBuilder<TKey, string>(_config).Build();
-                var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
+                _logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
+
+                try
                 {
-                    Key = keyMessage.Key,
-                    Value = keyMessage.Payload
+                    using var p = new ProducerBuilder<TKey, string>(_config).Build();
+                    var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
+                    {
+                        Key = keyMessage.Key,
+                        Value = keyMessage.Payload
+                    }
+                    , ct)
+                    .ConfigureAwait(false);
+
+                    _logger.LogInformation("Sending done");
                 }
-                , ct)
-                .ConfigureAwait(false);
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error on sending message");
+                    throw;
+                }
+
             }
             else if (message is NoKeyMessage noKeyMessage)
             {
-                using var p = new ProducerBuilder<Null, string>(_config).Build();
-                var dr = await p.ProduceAsync(topic.Name, new Message<Null, string>
+                _logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
+
+                try
                 {
-                    Value = noKeyMessage.Payload
+                    using var p = new ProducerBuilder<Null, string>(_config).Build();
+                    var dr = await p.ProduceAsync(topic.Name, new Message<Null, string>
+                    {
+                        Value = noKeyMessage.Payload
+                    }
+                    , ct)
+                    .ConfigureAwait(false);
+
+                    _logger.LogInformation("Sending done");
                 }
-                , ct)
-                .ConfigureAwait(false);
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error on sending message");
+                    throw;
+                }
             }
             else
             {
+                _logger.LogError("Not supported message type {Type}", message.GetType().FullName);
+
                 throw new ArgumentException($"Not supported message type {message.GetType().FullName}", nameof(message));
             }
         }
 
         private readonly ProducerConfig _config;
+        private readonly ILogger<KafkaSender> _logger;
     }
 }
