@@ -2,9 +2,22 @@
 
 namespace Models
 {
+    /// <summary>
+    /// Apache Kaka topic.
+    /// </summary>
     public class Topic
     {
+        /// <summary>
+        /// Topic name.
+        /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Creates <see cref="Topic"/>.
+        /// </summary>
+        /// <param name="name">Topic name.</param>
+        /// <exception cref="ArgumentNullException">Thows if name is null.</exception>
+        /// <exception cref="ArgumentException">Throws if name is not valid for kafka topic.</exception>
         public Topic(string name)
         {
             ValidateName(name);

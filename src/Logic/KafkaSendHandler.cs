@@ -2,10 +2,19 @@
 
 namespace Logic
 {
+    /// <summary>
+    /// Logic handler.
+    /// </summary>
     public class KafkaSendHandler : IKafkaSendHandler
     {
         public IEnumerable<KeyType> ValidKeyTypes { get; }
 
+        /// <summary>
+        /// Creates <see cref="KafkaSendHandler"/>.
+        /// </summary>
+        /// <param name="sender">Sender contract.</param>
+        /// <param name="validator">Json validation contract.</param>
+        /// <exception cref="ArgumentNullException">Throws if sender is or validator is null.</exception>
         public KafkaSendHandler(IKafkaSender sender,
                                 IJsonValidator validator)
         {
@@ -15,6 +24,9 @@ namespace Logic
             ValidKeyTypes = Enum.GetValues(typeof(KeyType)).Cast<KeyType>().ToList();
         }
 
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentException">Throws if payload is not json.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
         public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, bool jsonPayload, CancellationToken ct)
         {
             var topic = new Topic(topicName);
