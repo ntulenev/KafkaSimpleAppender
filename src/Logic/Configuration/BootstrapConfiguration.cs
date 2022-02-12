@@ -3,10 +3,14 @@
 namespace Logic.Configuration
 {
     /// <summary>
-    /// bootstrap servers config
+    /// Bootstrap servers config.
     /// </summary>
     public class BootstrapConfiguration
     {
+        /// <summary>
+        /// Bootstrap servers connection string.
+        /// </summary>
+        public string BootstrapServersConnectionString => string.Join(',', BootstrapServers);
         /// <summary>
         /// List of bootstrap servers
         /// </summary>
