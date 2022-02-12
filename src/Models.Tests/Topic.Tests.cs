@@ -27,10 +27,10 @@ namespace Models.Tests
             var name = string.Empty;
 
             // Act
-            var exception = Record.Exception(() => new Topic(null!));
+            var exception = Record.Exception(() => new Topic(name));
 
             // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
         [Fact(DisplayName = "Topic name can't have any whitespaces.")]
@@ -41,10 +41,10 @@ namespace Models.Tests
             var name = "topic name";
 
             // Act
-            var exception = Record.Exception(() => new Topic(null!));
+            var exception = Record.Exception(() => new Topic(name));
 
             // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
         [Fact(DisplayName = "Topic name can't have long names.")]
@@ -55,10 +55,10 @@ namespace Models.Tests
             var name = new string('x', 250);
 
             // Act
-            var exception = Record.Exception(() => new Topic(null!));
+            var exception = Record.Exception(() => new Topic(name));
 
             // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
         [Fact(DisplayName = "Topic name can't have bad symbols names.")]
@@ -69,10 +69,10 @@ namespace Models.Tests
             var name = "ы?:%";
 
             // Act
-            var exception = Record.Exception(() => new Topic(null!));
+            var exception = Record.Exception(() => new Topic(name));
 
             // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
 
 
