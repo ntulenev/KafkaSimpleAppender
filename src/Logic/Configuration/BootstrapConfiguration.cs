@@ -31,5 +31,11 @@ namespace Logic.Configuration
         /// Kafka security protocol mechanism.
         /// </summary>
         public SaslMechanism? SASLMechanism { get; set; }
+
+        /// <summary>
+        /// Creates Kafka connection string.
+        /// </summary>
+        /// <returns>Connection string</returns>
+        public string CreateConnectionString() => string.Join(',', BootstrapServers);
     }
 }

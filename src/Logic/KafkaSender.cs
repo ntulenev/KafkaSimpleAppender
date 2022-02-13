@@ -28,7 +28,7 @@ namespace Logic
 
             var configData = config.Value;
 
-            _config = new ProducerConfig { BootstrapServers = string.Join(',', configData.BootstrapServers) };
+            _config = new() { BootstrapServers = configData.CreateConnectionString() };
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
