@@ -36,6 +36,14 @@ namespace Logic.Configuration
         /// Creates Kafka connection string.
         /// </summary>
         /// <returns>Connection string</returns>
-        public string CreateConnectionString() => string.Join(',', BootstrapServers);
+        public string CreateConnectionString()
+        {
+            if (BootstrapServers == null)
+            {
+                throw new InvalidOperationException("BootstrapServers collection is null");
+            }
+
+            return string.Join(',', BootstrapServers);
+        }
     }
 }
