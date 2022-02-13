@@ -8,10 +8,6 @@ namespace Logic.Configuration
     public class BootstrapConfiguration
     {
         /// <summary>
-        /// Bootstrap servers connection string.
-        /// </summary>
-        public string BootstrapServersConnectionString => string.Join(',', BootstrapServers);
-        /// <summary>
         /// List of bootstrap servers
         /// </summary>
         public List<string> BootstrapServers { get; set; } = default!;
