@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json.Linq;
 
 namespace Logic
 {
@@ -15,8 +15,8 @@ namespace Logic
 
             try
             {
-                _ = JsonDocument.Parse(value);
-                return true;
+                var token = JToken.Parse(value);
+                return token.Type == JTokenType.Object || token.Type == JTokenType.Array;
             }
             catch
             {
