@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 
 using FluentAssertions;
 
@@ -10,7 +12,7 @@ using Moq;
 using Xunit;
 
 using Logic.Configuration;
-using System;
+using Models;
 
 namespace Logic.Tests
 {
@@ -65,6 +67,79 @@ namespace Logic.Tests
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "KafkaSender cant send message to null topic.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendInNullTopic()
+        {
+            // Arrange
+            var config = new BootstrapConfiguration
+            {
+                BootstrapServers = new List<string> { "test" }
+            };
+
+            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+            configMock.Setup(x => x.Value).Returns(config);
+
+            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var testMessage = new NoKeyMessage("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(null!, testMessage, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "KafkaSender cant send null message.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendNullMessage()
+        {
+            // Arrange
+            var config = new BootstrapConfiguration
+            {
+                BootstrapServers = new List<string> { "test" }
+            };
+
+            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+            configMock.Setup(x => x.Value).Returns(config);
+
+            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, (NoKeyMessage)null!, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "KafkaSender cant send unknown message type.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendUnknownMessage()
+        {
+            // Arrange
+            var config = new BootstrapConfiguration
+            {
+                BootstrapServers = new List<string> { "test" }
+            };
+
+            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+            configMock.Setup(x => x.Value).Returns(config);
+
+            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+            var msg = new TestMessageType("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, msg, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
         }
     }
 }
