@@ -7,8 +7,18 @@ using Logic.Configuration;
 
 namespace Logic
 {
-    internal class SimpleProducerBuilder : IProducerBuilder
+    /// <summary>
+    /// Simple builder for Kafka producer
+    /// </summary>
+    public class SimpleProducerBuilder : IProducerBuilder
     {
+        /// <summary>
+        /// Creates <see cref="SimpleProducerBuilder"/>.
+        /// </summary>
+        /// <param name="config">Kafka sender configuration.</param>
+        /// <param name="logger">Logger.</param>
+        /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
+        /// /// <exception cref="ArgumentNullException">thows if logger is null.</exception>
         public SimpleProducerBuilder(IOptions<BootstrapConfiguration> config,
                    ILogger<SimpleProducerBuilder> logger)
         {
@@ -26,6 +36,7 @@ namespace Logic
             _logger.LogDebug("Builder created");
         }
 
+        /// <inheritdoc/>
         public IProducer<TKey, string> Build<TKey>()
         {
             return new ProducerBuilder<TKey, string>(_config).Build();
