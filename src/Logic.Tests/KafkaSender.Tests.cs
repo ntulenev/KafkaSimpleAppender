@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 
 using FluentAssertions;
@@ -10,7 +9,6 @@ using Moq;
 
 using Xunit;
 
-using Logic.Configuration;
 using Models;
 
 namespace Logic.Tests
