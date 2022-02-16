@@ -5,7 +5,6 @@ using System.Threading;
 using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 using Moq;
 
@@ -28,8 +27,7 @@ namespace Logic.Tests
                 BootstrapServers = new List<string> { "test" }
             };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
             var exception = Record.Exception(() => new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>()));
@@ -48,8 +46,7 @@ namespace Logic.Tests
                 BootstrapServers = new List<string> { "test" }
             };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
             var exception = Record.Exception(() => new KafkaSender(configMock.Object, null!));
@@ -79,8 +76,7 @@ namespace Logic.Tests
                 BootstrapServers = new List<string> { "test" }
             };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();
@@ -103,8 +99,7 @@ namespace Logic.Tests
                 BootstrapServers = new List<string> { "test" }
             };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();
@@ -127,8 +122,7 @@ namespace Logic.Tests
                 BootstrapServers = new List<string> { "test" }
             };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();

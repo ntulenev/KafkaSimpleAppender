@@ -1,9 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 using Confluent.Kafka;
 
-using Logic.Configuration;
 using Models;
 
 namespace Logic
@@ -18,18 +16,10 @@ namespace Logic
         /// </summary>
         /// <param name="config">Kafka sender configuration.</param>
         /// <exception cref="ArgumentNullException">If config is null.</exception>
-        public KafkaSender(IOptions<BootstrapConfiguration> config,
+        public KafkaSender(IProducerBuilder builder,
                            ILogger<KafkaSender> logger)
         {
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            var configData = config.Value;
-
-            _config = new() { BootstrapServers = configData.CreateConnectionString() };
-
+            _builder = builder ?? throw new ArgumentNullException(nameof(builder));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _logger.LogDebug("Sender created");
@@ -48,7 +38,7 @@ namespace Logic
 
                 try
                 {
-                    using var p = new ProducerBuilder<TKey, string>(_config).Build();
+                    using var p = _builder.Build<TKey>();
                     var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
                     {
                         Key = keyMessage.Key,
@@ -72,7 +62,7 @@ namespace Logic
 
                 try
                 {
-                    using var p = new ProducerBuilder<Null, string>(_config).Build();
+                    using var p = _builder.Build<Null>();
                     var dr = await p.ProduceAsync(topic.Name, new Message<Null, string>
                     {
                         Value = noKeyMessage.Payload
@@ -96,7 +86,7 @@ namespace Logic
             }
         }
 
-        private readonly ProducerConfig _config;
+        private readonly IProducerBuilder _builder;
         private readonly ILogger<KafkaSender> _logger;
     }
 }
