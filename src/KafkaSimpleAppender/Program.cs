@@ -30,6 +30,7 @@ var builder = new HostBuilder()
       services.AddSingleton<IKafkaSender, KafkaSender>();
       services.AddSingleton<IKafkaSendHandler, KafkaSendHandler>();
       services.AddSingleton<IJsonValidator, JsonValidator>();
+      services.AddSingleton<IProducerBuilder, SimpleProducerBuilder>();
 
       services.Configure<BootstrapConfiguration>(hostContext.Configuration.GetSection(nameof(BootstrapConfiguration)));
       services.AddSingleton<IValidateOptions<BootstrapConfiguration>, BootstrapConfigurationValidator>();
