@@ -22,11 +22,6 @@ namespace Logic.Tests
         public void CouldBeCreated()
         {
             // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
-
             var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
@@ -41,11 +36,6 @@ namespace Logic.Tests
         public void CantBeCreatedWithNullLogger()
         {
             // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
-
             var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
@@ -55,9 +45,9 @@ namespace Logic.Tests
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
-        [Fact(DisplayName = "KafkaSender can't be created without config.")]
+        [Fact(DisplayName = "KafkaSender can't be created without builder.")]
         [Trait("Category", "Unit")]
-        public void CantBeCreatedWithNullConfig()
+        public void CantBeCreatedWithNullBuilder()
         {
             // Act
             var exception = Record.Exception(() => new KafkaSender(null!, Mock.Of<ILogger<KafkaSender>>()));
@@ -71,11 +61,6 @@ namespace Logic.Tests
         public async void CantSendInNullTopic()
         {
             // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
-
             var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
@@ -94,11 +79,6 @@ namespace Logic.Tests
         public async void CantSendNullMessage()
         {
             // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
-
             var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
@@ -117,11 +97,6 @@ namespace Logic.Tests
         public async void CantSendUnknownMessage()
         {
             // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
-
             var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
