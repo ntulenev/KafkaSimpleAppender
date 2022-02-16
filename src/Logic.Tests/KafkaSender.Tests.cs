@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 using FluentAssertions;
+
+using Confluent.Kafka;
 
 using Microsoft.Extensions.Logging;
 
@@ -20,10 +23,10 @@ namespace Logic.Tests
         public void CouldBeCreated()
         {
             // Arrange
-            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
-            var exception = Record.Exception(() => new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>()));
+            var exception = Record.Exception(() => new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>()));
 
             // Assert
             exception.Should().BeNull();
@@ -34,10 +37,10 @@ namespace Logic.Tests
         public void CantBeCreatedWithNullLogger()
         {
             // Arrange
-            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
             // Act
-            var exception = Record.Exception(() => new KafkaSender(configMock.Object, null!));
+            var exception = Record.Exception(() => new KafkaSender(builderMock.Object, null!));
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
@@ -59,9 +62,9 @@ namespace Logic.Tests
         public async void CantSendInNullTopic()
         {
             // Arrange
-            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
-            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();
             var testMessage = new NoKeyMessage("test");
 
@@ -77,9 +80,9 @@ namespace Logic.Tests
         public async void CantSendNullMessage()
         {
             // Arrange
-            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
-            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();
             var topic = new Topic("test");
 
@@ -95,9 +98,9 @@ namespace Logic.Tests
         public async void CantSendUnknownMessage()
         {
             // Arrange
-            var configMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
 
-            var sender = new KafkaSender(configMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
             using var cts = new CancellationTokenSource();
             var topic = new Topic("test");
             var msg = new TestMessageType("test");
@@ -107,6 +110,60 @@ namespace Logic.Tests
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
+
+        [Fact(DisplayName = "KafkaSender can send No key message type.")]
+        [Trait("Category", "Unit")]
+        public async void CanSendNoKeyMessage()
+        {
+            // Arrange
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+            var msg = new NoKeyMessage("test");
+
+            var producerMock = new Mock<IProducer<Null, string>>(MockBehavior.Strict);
+            producerMock.Setup(x => x.ProduceAsync(topic.Name, It.Is<Message<Null, string>>(x => x.Value == msg.Payload), cts.Token))
+                        .Returns(() => Task.FromResult(new DeliveryResult<Null, string>()));
+            producerMock.Setup(x => x.Dispose());
+
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            builderMock.Setup(x => x.Build<Null>()).Returns(producerMock.Object);
+
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, msg, cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            producerMock.Verify(x => x.ProduceAsync(topic.Name, It.Is<Message<Null, string>>(x => x.Value == msg.Payload), cts.Token), Times.Once);
+        }
+
+        [Fact(DisplayName = "KafkaSender can send key message type.")]
+        [Trait("Category", "Unit")]
+        public async void CanSendKeyMessage()
+        {
+            // Arrange
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+            var msg = new Message<int>(1, "test");
+
+            var producerMock = new Mock<IProducer<int, string>>(MockBehavior.Strict);
+            producerMock.Setup(x => x.ProduceAsync(topic.Name, It.Is<Message<int, string>>(x => x.Value == msg.Payload && x.Key == msg.Key), cts.Token))
+                        .Returns(() => Task.FromResult(new DeliveryResult<int, string>()));
+            producerMock.Setup(x => x.Dispose());
+
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+            builderMock.Setup(x => x.Build<int>()).Returns(producerMock.Object);
+
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, msg, cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            producerMock.Verify(x => x.ProduceAsync(topic.Name, It.Is<Message<int, string>>(x => x.Value == msg.Payload && x.Key == msg.Key), cts.Token), Times.Once);
         }
     }
 }
