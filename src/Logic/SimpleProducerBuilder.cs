@@ -29,7 +29,14 @@ namespace Logic
 
             var configData = config.Value;
 
-            _config = new() { BootstrapServers = configData.CreateConnectionString() };
+            _config = new()
+            {
+                BootstrapServers = configData.CreateConnectionString(),
+                SecurityProtocol = configData.SecurityProtocol,
+                SaslMechanism = configData.SASLMechanism,
+                SaslUsername = configData.Username,
+                SaslPassword = configData.Password
+            };
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
