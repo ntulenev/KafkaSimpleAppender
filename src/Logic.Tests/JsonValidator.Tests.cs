@@ -1,5 +1,11 @@
-﻿using FluentAssertions;
-using System;
+﻿using System;
+
+using FluentAssertions;
+
+using Microsoft.Extensions.Logging;
+
+using Moq;
+
 using Xunit;
 
 namespace Logic.Tests
@@ -11,10 +17,21 @@ namespace Logic.Tests
         public void CouldBeCreated()
         {
             // Act
-            var exception = Record.Exception(() => new JsonValidator());
+            var exception = Record.Exception(() => new JsonValidator(Mock.Of<ILogger<JsonValidator>>()));
 
             // Assert
             exception.Should().BeNull();
+        }
+
+        [Fact(DisplayName = "JsonValidator cant be created if logger is null.")]
+        [Trait("Category", "Unit")]
+        public void CantBeCreatedWithNullLogger()
+        {
+            // Act
+            var exception = Record.Exception(() => new JsonValidator(null!));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
 
         [Fact(DisplayName = "JsonValidator could be validated with correct string.")]
@@ -23,7 +40,7 @@ namespace Logic.Tests
         {
             // Arrange
             var json = "{ \"test\" : 123  }";
-            var validator = new JsonValidator();
+            var validator = new JsonValidator(Mock.Of<ILogger<JsonValidator>>());
 
             // Act
             var isValid = validator.IsValid(json);
@@ -37,7 +54,7 @@ namespace Logic.Tests
         public void CantValidateNullString()
         {
             // Arrange
-            var validator = new JsonValidator();
+            var validator = new JsonValidator(Mock.Of<ILogger<JsonValidator>>());
 
             // Act
             var exception = Record.Exception(() => _ = validator.IsValid(null!));
@@ -54,7 +71,7 @@ namespace Logic.Tests
         public void CanValidateIncorrectString(string json)
         {
             // Arrange
-            var validator = new JsonValidator();
+            var validator = new JsonValidator(Mock.Of<ILogger<JsonValidator>>());
 
             // Act
             var isValid = validator.IsValid(json);
