@@ -217,5 +217,77 @@ namespace Logic.Tests
                                                     It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
                                                     cts.Token), Times.Once);
         }
+
+
+        [Fact(DisplayName = "KafkaSendHandler sends long key message.")]
+        [Trait("Category", "Unit")]
+        public async Task CanSendLongKeyMessage()
+        {
+            // Arrange
+            var topicName = "test";
+            var key = "123";
+            var intKey = 123;
+            var value = "testValue";
+            var type = Models.KeyType.Long;
+            var isJson = false;
+
+            using var cts = new CancellationTokenSource();
+
+            var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
+            senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<Message<long>>(a => a.Key == intKey && a.Payload == value),
+                                                    cts.Token)).Returns(Task.CompletedTask);
+
+            var sender = new KafkaSendHandler(senderMock.Object,
+                                              Mock.Of<IJsonValidator>(MockBehavior.Strict),
+                                              Mock.Of<ILogger<KafkaSendHandler>>());
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                                                        await sender.HandleAsync(
+                                                        topicName,
+                                                        type,
+                                                        key,
+                                                        value,
+                                                        isJson,
+                                                        cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<Message<long>>(a => a.Key == intKey && a.Payload == value),
+                                                    cts.Token), Times.Once);
+        }
+
+        [Fact(DisplayName = "KafkaSendHandler cant sends wrong long key message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSendWrongLongKeyMessage()
+        {
+            // Arrange
+            var topicName = "test";
+            var key = "testKey";
+            var value = "testValue";
+            var type = Models.KeyType.Long;
+            var isJson = false;
+
+            using var cts = new CancellationTokenSource();
+
+            var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
+
+            var sender = new KafkaSendHandler(senderMock.Object,
+                                              Mock.Of<IJsonValidator>(MockBehavior.Strict),
+                                              Mock.Of<ILogger<KafkaSendHandler>>());
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                                                        await sender.HandleAsync(
+                                                        topicName,
+                                                        type,
+                                                        key,
+                                                        value,
+                                                        isJson,
+                                                        cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<FormatException>();
+        }
     }
 }
