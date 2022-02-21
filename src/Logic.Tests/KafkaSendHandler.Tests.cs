@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
 using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
-
+using Models;
 using Moq;
 
 using Xunit;
@@ -176,6 +175,44 @@ namespace Logic.Tests
 
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
+
+        [Fact(DisplayName = "KafkaSendHandler sends string key message.")]
+        [Trait("Category", "Unit")]
+        public async Task CanSendStringKeyMessage()
+        {
+            // Arrange
+            var topicName = "test";
+            var key = "testKey";
+            var value = "testValue";
+            var type = Models.KeyType.String;
+            var isJson = false;
+
+            using var cts = new CancellationTokenSource();
+
+            var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
+            senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                                    cts.Token)).Returns(Task.CompletedTask);
+
+            var sender = new KafkaSendHandler(senderMock.Object,
+                                              Mock.Of<IJsonValidator>(MockBehavior.Strict),
+                                              Mock.Of<ILogger<KafkaSendHandler>>());
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                                                        await sender.HandleAsync(
+                                                        topicName,
+                                                        type,
+                                                        key,
+                                                        value,
+                                                        isJson,
+                                                        cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                                    cts.Token), Times.Once);
         }
     }
 }
