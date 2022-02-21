@@ -54,7 +54,7 @@ namespace Logic
                 case KeyType.String:
                     {
                         var message = new Message<string>(key, payload);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        await _sender.SendAsync(topic, message, ct);
                         break;
                     }
                 case KeyType.JSON:
@@ -65,19 +65,19 @@ namespace Logic
                         }
 
                         var message = new Message<string>(key, payload);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        await _sender.SendAsync(topic, message, ct);
                         break;
                     }
                 case KeyType.Long:
                     {
                         var message = new Message<long>(long.Parse(key), payload);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        await _sender.SendAsync(topic, message, ct);
                         break;
                     }
                 case KeyType.NotSet:
                     {
                         var message = new NoKeyMessage(payload);
-                        await _sender.SendAsync(topic, message, CancellationToken.None);
+                        await _sender.SendAsync(topic, message, ct);
                         break;
                     }
                 default: throw new ArgumentOutOfRangeException(nameof(keyType));
