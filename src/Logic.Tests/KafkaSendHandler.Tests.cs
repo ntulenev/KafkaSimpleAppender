@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using FluentAssertions;
 
 using Microsoft.Extensions.Logging;
-using Models;
+
 using Moq;
 
 using Xunit;
+
+using Models;
 
 namespace Logic.Tests
 {
