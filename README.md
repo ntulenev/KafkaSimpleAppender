@@ -1,7 +1,5 @@
 # KafkaSimpleAppender
 
-**Work** **in** **progress...**
-
 UI for sending simple messages to Kafka
 
 Current version supports messages with several key types (string, json, long and no key) and string or json payload.
