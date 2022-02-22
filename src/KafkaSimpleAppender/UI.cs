@@ -8,7 +8,9 @@ namespace KafkaSimpleAppender
         public UI(IKafkaSendHandler hander)
         {
             _hander = hander ?? throw new ArgumentNullException(nameof(hander));
+
             InitializeComponent();
+
             cbTypes.DataSource = _hander.ValidKeyTypes;
         }
 
@@ -20,9 +22,9 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                await _hander.HandleAsync(tbTopic.Text, 
-                                          (KeyType)cbTypes.SelectedItem, 
-                                          tbKey.Text, 
+                await _hander.HandleAsync(tbTopic.Text,
+                                          (KeyType)cbTypes.SelectedItem,
+                                          tbKey.Text,
                                           tbMessage.Text,
                                           cbJson.Checked,
                                           CancellationToken.None);
