@@ -289,5 +289,84 @@ namespace Logic.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<FormatException>();
         }
+
+        [Fact(DisplayName = "KafkaSendHandler can send json key message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSendWrongJsonKeyMessage()
+        {
+            // Arrange
+            var topicName = "test";
+            var key = "testKey";
+            var value = "testValue";
+            var type = Models.KeyType.JSON;
+            var isJson = false;
+
+            using var cts = new CancellationTokenSource();
+
+            var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
+            senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                        It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                        cts.Token)).Returns(Task.CompletedTask);
+
+            var jsonValidatorMock = new Mock<IJsonValidator>(MockBehavior.Strict);
+            jsonValidatorMock.Setup(x => x.IsValid(key)).Returns(true);
+
+            var sender = new KafkaSendHandler(senderMock.Object,
+                                              jsonValidatorMock.Object,
+                                              Mock.Of<ILogger<KafkaSendHandler>>());
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                                                        await sender.HandleAsync(
+                                                        topicName,
+                                                        type,
+                                                        key,
+                                                        value,
+                                                        isJson,
+                                                        cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                                    cts.Token), Times.Once);
+        }
+
+        [Fact(DisplayName = "KafkaSendHandler can send no key message.")]
+        [Trait("Category", "Unit")]
+        public async Task CantSendNoKeyMessage()
+        {
+            // Arrange
+            var topicName = "test";
+            var value = "testValue";
+            var type = Models.KeyType.NotSet;
+            var isJson = false;
+
+            using var cts = new CancellationTokenSource();
+
+            var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
+            senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                        It.Is<NoKeyMessage>(a => a.Payload == value),
+                                        cts.Token)).Returns(Task.CompletedTask);
+
+
+            var sender = new KafkaSendHandler(senderMock.Object,
+                                              Mock.Of<IJsonValidator>(MockBehavior.Strict),
+                                              Mock.Of<ILogger<KafkaSendHandler>>());
+            // Act
+            var exception = await Record.ExceptionAsync(async () =>
+                                                        await sender.HandleAsync(
+                                                        topicName,
+                                                        type,
+                                                        null!,
+                                                        value,
+                                                        isJson,
+                                                        cts.Token));
+
+            // Assert
+            exception.Should().BeNull();
+            senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
+                                                    It.Is<NoKeyMessage>(a => a.Payload == value),
+                                                    cts.Token), Times.Once);
+        }
     }
 }
