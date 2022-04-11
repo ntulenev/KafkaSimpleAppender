@@ -33,6 +33,11 @@ namespace Logic.Configuration
         public SaslMechanism? SASLMechanism { get; set; }
 
         /// <summary>
+        /// Maximum Kafka protocol request message size.
+        /// </summary>
+        public int? MessageMaxBytes { get; set; }
+
+        /// <summary>
         /// Creates Kafka connection string.
         /// </summary>
         /// <returns>Connection string</returns>
