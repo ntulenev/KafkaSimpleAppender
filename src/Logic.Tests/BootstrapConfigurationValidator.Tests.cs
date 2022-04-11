@@ -47,6 +47,29 @@ namespace Logic
             result.Should().Be(ValidateOptionsResult.Success);
         }
 
+        [Fact(DisplayName = "BootstrapConfigurationValidator success on valid params with size.")]
+        [Trait("Category", "Unit")]
+        public void CanSuccessValidateSize()
+        {
+
+            // Arrange
+            var validator = new BootstrapConfigurationValidator();
+            var optinos = new BootstrapConfiguration()
+            {
+                BootstrapServers = new[]
+                 {
+                     "test"
+                 }.ToList(),
+                MessageMaxBytes = 1024
+            };
+
+            // Act
+            ValidateOptionsResult result = validator.Validate(string.Empty, optinos);
+
+            // Assert
+            result.Should().Be(ValidateOptionsResult.Success);
+        }
+
         [Fact(DisplayName = "BootstrapConfigurationValidator fails on null BootstrapServers params.")]
         [Trait("Category", "Unit")]
         public void CanFailValidateNullBootstrapServers()
@@ -149,6 +172,32 @@ namespace Logic
                      "test",
                      "     "
                  }.ToList()
+            };
+
+            // Act
+            ValidateOptionsResult result = validator.Validate(string.Empty, optinos);
+
+            // Assert
+            result.Should().NotBe(ValidateOptionsResult.Success);
+            result.Failed.Should().BeTrue();
+        }
+
+        [Theory(DisplayName = "BootstrapConfigurationValidator fails on bad message size.")]
+        [Trait("Category", "Unit")]
+        [InlineData(0)]
+        [InlineData(-1)]
+        public void CanFailValidateBadMessageSize(int size)
+        {
+
+            // Arrange
+            var validator = new BootstrapConfigurationValidator();
+            var optinos = new BootstrapConfiguration()
+            {
+                BootstrapServers = new[]
+                 {
+                     "test"
+                 }.ToList(),
+                MessageMaxBytes = size
             };
 
             // Act
