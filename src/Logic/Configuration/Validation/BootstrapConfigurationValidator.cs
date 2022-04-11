@@ -37,6 +37,11 @@ namespace Logic.Configuration.Validation
                 return ValidateOptionsResult.Fail("BootstrapServers section contains empty string of whitespaces.");
             }
 
+            if (options.MessageMaxBytes is not null && options.MessageMaxBytes <= 0)
+            {
+                return ValidateOptionsResult.Fail("MessageMaxBytes should be more that zero.");
+            }
+
             return ValidateOptionsResult.Success;
         }
     }
