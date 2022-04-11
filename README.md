@@ -16,7 +16,8 @@ Config example:
     "Username": "user123",
     "Password": "pwd123",
     "SecurityProtocol": "SaslPlaintext",
-    "SASLMechanism": "ScramSha512"
+    "SASLMechanism": "ScramSha512",
+    "MessageMaxBytes": 10000000
   }
 ```
 
@@ -27,3 +28,4 @@ Config example:
 | Password | SASL password (optional)  |
 | SecurityProtocol | Protocol used to communicate with brokers (Plaintext,Ssl,SaslPlaintext,SaslSsl) (optional)  |
 | SASLMechanism | SASL mechanism to use for authentication (Gssapi,Plain,ScramSha256,ScramSha512,OAuthBearer) (optional)  |
+| MessageMaxBytes | Maximum Kafka protocol request message size (optional)  |
