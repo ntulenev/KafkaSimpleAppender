@@ -35,7 +35,8 @@ namespace Logic
                 SecurityProtocol = configData.SecurityProtocol,
                 SaslMechanism = configData.SASLMechanism,
                 SaslUsername = configData.Username,
-                SaslPassword = configData.Password
+                SaslPassword = configData.Password,
+                MessageMaxBytes = configData.MessageMaxBytes
             };
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
