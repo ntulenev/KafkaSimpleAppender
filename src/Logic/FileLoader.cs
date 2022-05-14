@@ -19,7 +19,7 @@ namespace Logic
             _valueFieldName = configData.FileValueField;
         }
 
-        public async Task<IEnumerable<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct)
+        public async Task<IReadOnlyCollection<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(filePath);
 

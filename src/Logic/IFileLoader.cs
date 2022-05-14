@@ -2,6 +2,6 @@
 {
     public interface IFileLoader
     {
-        public Task<IEnumerable<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct);
+        public Task<IReadOnlyCollection<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct);
     }
 }

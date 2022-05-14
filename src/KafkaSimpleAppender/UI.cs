@@ -1,5 +1,6 @@
 ﻿using Logic;
 using Models;
+using System.Text;
 
 namespace KafkaSimpleAppender
 {
@@ -34,8 +35,11 @@ namespace KafkaSimpleAppender
                     DisableUI();
 
                     _fileMessages = await _fileLoader.LoadAsync(opDialog.FileName, CancellationToken.None);
+                    _fileName = opDialog.SafeFileName;
 
                     MessageBox.Show("Success", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    ShowFileData();
                 }
                 catch (Exception ex)
                 {
@@ -149,9 +153,22 @@ namespace KafkaSimpleAppender
             }
         }
 
+        private void ShowFileData(int? progress = null)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"File : {_fileName}");
+            sb.AppendLine($"Items count : {_fileMessages.Count}");
+            if (progress != null)
+            {
+                sb.AppendLine($"Loading progress: {progress}/{_fileMessages.Count}");
+            }
+            rbFileLog.Text = sb.ToString();
+        }
+
         private readonly IKafkaSendHandler _hander;
         private readonly IFileLoader _fileLoader;
 
-        private IEnumerable<KeyValuePair<string, string>> _fileMessages = null!;
+        private string _fileName = null!;
+        private IReadOnlyCollection<KeyValuePair<string, string>> _fileMessages = null!;
     }
 }
