@@ -32,7 +32,7 @@ namespace Logic
         }
 
         /// <inheritdoc/>
-        /// <exception cref="ArgumentException">Throws if payload is not json.</exception>
+        /// <exception cref="ArgumentException">Throws if payload or key is not json.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
         public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, bool jsonPayload, CancellationToken ct)
         {
@@ -82,6 +82,72 @@ namespace Logic
                     }
                 default: throw new ArgumentOutOfRangeException(nameof(keyType));
             }
+        }
+
+        /// <inheritdoc/>
+        /// <exception cref="ArgumentNullException">If data is not set.</exception>
+        /// <exception cref="ArgumentException">Throws if payload or key is not json.</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
+        public async Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, CancellationToken ct)
+        {
+            ArgumentNullException.ThrowIfNull(data);
+
+            _logger.LogDebug("Start handle data collection topic {Topic} for type {KeyType}, payload is json :{IsPayloadJson}",
+                         topicName, keyType, jsonPayload);
+
+            var topic = new Topic(topicName);
+
+            if (jsonPayload)
+            {
+                if (data.Select(x => _validator.IsValid(x.Value)).Any(x => x is false))
+                {
+                    throw new ArgumentException("Message payload is not valid json", nameof(data));
+                }
+            }
+
+            switch (keyType)
+            {
+                case KeyType.String:
+                    {
+                        var messages = data.Select(x => new Message<string>(x.Key, x.Value));
+                        await Task.Yield();
+                        break;
+                    }
+                case KeyType.JSON:
+                    {
+                        var messages = data.Select(x =>
+                        {
+                            if (!_validator.IsValid(x.Key))
+                            {
+                                throw new ArgumentException("Message key is not valid json", nameof(data));
+                            }
+
+                            return new Message<string>(x.Key, x.Value);
+                        });
+
+                        await Task.Yield();
+                        break;
+                    }
+                case KeyType.Long:
+                    {
+                        var messages = data.Select(x => new Message<long>(long.Parse(x.Key), x.Value));
+
+                        await Task.Yield();
+
+                        break;
+                    }
+                case KeyType.NotSet:
+                    {
+                        var messages = data.Select(x => new NoKeyMessage(x.Value));
+
+                        await Task.Yield();
+
+                        //await _sender.SendAsync(topic, message, ct);
+                        break;
+                    }
+                default: throw new ArgumentOutOfRangeException(nameof(keyType));
+            }
+
         }
 
         private readonly IKafkaSender _sender;
