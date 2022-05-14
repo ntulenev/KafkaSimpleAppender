@@ -84,7 +84,6 @@ namespace KafkaSimpleAppender
                           CancellationToken.None);
                 }
 
-
                 Clear();
 
                 MessageBox.Show("Success", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
