@@ -26,7 +26,7 @@ namespace Logic
         /// <param name="data">Key/value data collection</param>
         /// <param name="jsonPayload">Validate message payload as json</param>
         /// <param name="ct">Cancellation token.</param>
-        public Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, CancellationToken ct);
+        public Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, Action<int> progressDelegate, CancellationToken ct);
 
         /// <summary>
         /// Valid Key types.

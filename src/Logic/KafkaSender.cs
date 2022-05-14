@@ -88,7 +88,7 @@ namespace Logic
 
         /// <inheritdoc/>
         /// <exception cref="ArgumentException">Throws if message type is not supported.</exception>
-        public async Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, CancellationToken ct)
+        public async Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, Action<int> progressDelegate, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(topic);
             ArgumentNullException.ThrowIfNull(messages);
@@ -100,6 +100,9 @@ namespace Logic
                 try
                 {
                     using var p = _builder.Build<TKey>();
+
+                    int progressIndex = 0;
+
                     foreach (var keyMessage in keyMessages)
                     {
                         var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
@@ -109,6 +112,8 @@ namespace Logic
                         }
                         , ct)
                         .ConfigureAwait(false);
+
+                        progressDelegate(++progressIndex);
 
                         _logger.LogInformation("Sending done");
                     }

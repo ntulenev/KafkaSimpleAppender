@@ -62,10 +62,16 @@ namespace KafkaSimpleAppender
 
                 if (rbFile.Checked)
                 {
+                    IProgress<int> progress = new Progress<int>(v =>
+                    {
+                        ShowFileData(v);
+                    });
+
                     await _hander.HandleAsync(tbTopic.Text,
                           (KeyType)cbTypes.SelectedItem,
                           _fileMessages,
                           cbJson.Checked,
+                          x => progress.Report(x),
                           CancellationToken.None);
                 }
                 else

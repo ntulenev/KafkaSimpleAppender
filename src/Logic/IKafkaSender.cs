@@ -23,6 +23,6 @@ namespace Logic
         /// <param name="topic">Kafka topic.</param>
         /// <param name="message">Kafka messages.</param>
         /// <param name="ct">Cancellation token.</param>
-        public Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, CancellationToken ct);
+        public Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, Action<int> progressDelegate, CancellationToken ct);
     }
 }

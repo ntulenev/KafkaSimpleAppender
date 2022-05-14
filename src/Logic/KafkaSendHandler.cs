@@ -88,7 +88,7 @@ namespace Logic
         /// <exception cref="ArgumentNullException">If data is not set.</exception>
         /// <exception cref="ArgumentException">Throws if payload or key is not json.</exception>
         /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
-        public async Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, CancellationToken ct)
+        public async Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, Action<int> progressDelegate, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(data);
 
@@ -110,7 +110,7 @@ namespace Logic
                 case KeyType.String:
                     {
                         var messages = data.Select(x => new Message<string>(x.Key, x.Value));
-                        await _sender.SendAsync(topic, messages, ct);
+                        await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 case KeyType.JSON:
@@ -124,19 +124,19 @@ namespace Logic
 
                             return new Message<string>(x.Key, x.Value);
                         });
-                        await _sender.SendAsync(topic, messages, ct);
+                        await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 case KeyType.Long:
                     {
                         var messages = data.Select(x => new Message<long>(long.Parse(x.Key), x.Value));
-                        await _sender.SendAsync(topic, messages, ct);
+                        await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 case KeyType.NotSet:
                     {
                         var messages = data.Select(x => new NoKeyMessage(x.Value));
-                        await _sender.SendAsync(topic, messages, ct);
+                        await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 default: throw new ArgumentOutOfRangeException(nameof(keyType));
