@@ -5,9 +5,10 @@ namespace KafkaSimpleAppender
 {
     public partial class UI : Form
     {
-        public UI(IKafkaSendHandler hander)
+        public UI(IKafkaSendHandler hander, IFileLoader fileLoader)
         {
             _hander = hander ?? throw new ArgumentNullException(nameof(hander));
+            _fileLoader = fileLoader ?? throw new ArgumentNullException(nameof(fileLoader));
 
             InitializeComponent();
 
@@ -23,6 +24,30 @@ namespace KafkaSimpleAppender
             CheckUIType();
         }
 
+        private async void bLoadFile_Click(object sender, EventArgs e)
+        {
+            var result = opDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    DisableUI();
+
+                    _fileMessages = await _fileLoader.LoadAsync(opDialog.FileName, CancellationToken.None);
+
+                    MessageBox.Show("Success", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                finally
+                {
+                    EnableUI();
+                }
+            }
+        }
+
 #pragma warning disable IDE1006 // Naming Styles
         private async void bSend_Click(object sender, EventArgs e)
 #pragma warning restore IDE1006 // Naming Styles
@@ -31,12 +56,24 @@ namespace KafkaSimpleAppender
             {
                 DisableUI();
 
-                await _hander.HandleAsync(tbTopic.Text,
-                                          (KeyType)cbTypes.SelectedItem,
-                                          tbKey.Text,
-                                          tbMessage.Text,
-                                          cbJson.Checked,
-                                          CancellationToken.None);
+                if (rbFile.Checked)
+                {
+                    await _hander.HandleAsync(tbTopic.Text,
+                          (KeyType)cbTypes.SelectedItem,
+                          _fileMessages,
+                          cbJson.Checked,
+                          CancellationToken.None);
+                }
+                else
+                {
+                    await _hander.HandleAsync(tbTopic.Text,
+                          (KeyType)cbTypes.SelectedItem,
+                          tbKey.Text,
+                          tbMessage.Text,
+                          cbJson.Checked,
+                          CancellationToken.None);
+                }
+
 
                 Clear();
 
@@ -102,7 +139,6 @@ namespace KafkaSimpleAppender
                 tbKey.Enabled = false;
                 tbMessage.Enabled = false;
                 bLoadFile.Enabled = true;
-
             }
             else
             {
@@ -114,5 +150,8 @@ namespace KafkaSimpleAppender
         }
 
         private readonly IKafkaSendHandler _hander;
+        private readonly IFileLoader _fileLoader;
+
+        private IEnumerable<KeyValuePair<string, string>> _fileMessages = null!;
     }
 }

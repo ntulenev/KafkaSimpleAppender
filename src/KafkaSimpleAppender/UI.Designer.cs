@@ -43,6 +43,7 @@
             this.rbFile = new System.Windows.Forms.RadioButton();
             this.bLoadFile = new System.Windows.Forms.Button();
             this.rbFileLog = new System.Windows.Forms.RichTextBox();
+            this.opDialog = new System.Windows.Forms.OpenFileDialog();
             this.SuspendLayout();
             // 
             // lbKey
@@ -173,6 +174,7 @@
             this.bLoadFile.TabIndex = 15;
             this.bLoadFile.Text = "Open File";
             this.bLoadFile.UseVisualStyleBackColor = true;
+            this.bLoadFile.Click += new System.EventHandler(this.bLoadFile_Click);
             // 
             // rbFileLog
             // 
@@ -185,6 +187,10 @@
             this.rbFileLog.Size = new System.Drawing.Size(458, 79);
             this.rbFileLog.TabIndex = 16;
             this.rbFileLog.Text = "";
+            // 
+            // opDialog
+            // 
+            this.opDialog.Filter = "Json files (*.json)|*.json|All files (*.*)|*.*";
             // 
             // UI
             // 
@@ -231,5 +237,6 @@
         private RadioButton rbFile;
         private Button bLoadFile;
         private RichTextBox rbFileLog;
+        private OpenFileDialog opDialog;
     }
 }
