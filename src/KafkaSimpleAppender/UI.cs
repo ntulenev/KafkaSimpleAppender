@@ -14,6 +14,15 @@ namespace KafkaSimpleAppender
             cbTypes.DataSource = _hander.ValidKeyTypes;
         }
 
+        private void rbFile_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckUIType();
+        }
+        private void rbSingle_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckUIType();
+        }
+
 #pragma warning disable IDE1006 // Naming Styles
         private async void bSend_Click(object sender, EventArgs e)
 #pragma warning restore IDE1006 // Naming Styles
@@ -68,6 +77,11 @@ namespace KafkaSimpleAppender
 
         private void CheckMessageTypeUI()
         {
+            if (rbFile.Checked)
+            {
+                return;
+            }
+
             if ((KeyType)cbTypes.SelectedItem == KeyType.NotSet)
             {
                 tbKey.Clear();
@@ -76,6 +90,26 @@ namespace KafkaSimpleAppender
             else
             {
                 tbKey.Enabled = true;
+            }
+        }
+
+        private void CheckUIType()
+        {
+            if (rbFile.Checked)
+            {
+                tbKey.Clear();
+                tbMessage.Clear();
+                tbKey.Enabled = false;
+                tbMessage.Enabled = false;
+                bLoadFile.Enabled = true;
+
+            }
+            else
+            {
+                rbFileLog.Clear();
+                bLoadFile.Enabled = false;
+                tbMessage.Enabled = true;
+                CheckMessageTypeUI();
             }
         }
 
