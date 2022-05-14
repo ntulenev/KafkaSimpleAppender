@@ -15,5 +15,14 @@ namespace Logic
         /// <param name="message">Kafka message.</param>
         /// <param name="ct">Cancellation token.</param>
         public Task SendAsync<TKey>(Topic topic, MessageBase<TKey> message, CancellationToken ct);
+
+        /// <summary>
+        /// Sends messages to Kafka topic.
+        /// </summary>
+        /// <typeparam name="TKey">Message Key type.</typeparam>
+        /// <param name="topic">Kafka topic.</param>
+        /// <param name="message">Kafka messages.</param>
+        /// <param name="ct">Cancellation token.</param>
+        public Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, CancellationToken ct);
     }
 }

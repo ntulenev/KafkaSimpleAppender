@@ -110,7 +110,7 @@ namespace Logic
                 case KeyType.String:
                     {
                         var messages = data.Select(x => new Message<string>(x.Key, x.Value));
-                        await Task.Yield();
+                        await _sender.SendAsync(topic, messages, ct);
                         break;
                     }
                 case KeyType.JSON:
@@ -124,25 +124,19 @@ namespace Logic
 
                             return new Message<string>(x.Key, x.Value);
                         });
-
-                        await Task.Yield();
+                        await _sender.SendAsync(topic, messages, ct);
                         break;
                     }
                 case KeyType.Long:
                     {
                         var messages = data.Select(x => new Message<long>(long.Parse(x.Key), x.Value));
-
-                        await Task.Yield();
-
+                        await _sender.SendAsync(topic, messages, ct);
                         break;
                     }
                 case KeyType.NotSet:
                     {
                         var messages = data.Select(x => new NoKeyMessage(x.Value));
-
-                        await Task.Yield();
-
-                        //await _sender.SendAsync(topic, message, ct);
+                        await _sender.SendAsync(topic, messages, ct);
                         break;
                     }
                 default: throw new ArgumentOutOfRangeException(nameof(keyType));
