@@ -2,8 +2,8 @@
 {
     public class FileLoaderConfiguration
     {
-        public string FileKeyField { get; set; }
+        public string FileKeyField { get; set; } = null!;
 
-        public string FileValueField { get; set; }
+        public string FileValueField { get; set; } = null!;
     }
 }
