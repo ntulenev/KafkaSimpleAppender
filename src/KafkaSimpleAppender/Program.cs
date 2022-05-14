@@ -34,6 +34,7 @@ var builder = new HostBuilder()
       services.AddSingleton<IFileLoader, FileLoader>();
 
       services.Configure<BootstrapConfiguration>(hostContext.Configuration.GetSection(nameof(BootstrapConfiguration)));
+      services.Configure<FileLoaderConfiguration>(hostContext.Configuration.GetSection(nameof(FileLoaderConfiguration)));
       services.AddSingleton<IValidateOptions<BootstrapConfiguration>, BootstrapConfigurationValidator>();
 
 
