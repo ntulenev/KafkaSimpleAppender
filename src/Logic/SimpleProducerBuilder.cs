@@ -19,7 +19,8 @@ namespace Logic
         /// <param name="logger">Logger.</param>
         /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
         /// /// <exception cref="ArgumentNullException">thows if logger is null.</exception>
-        public SimpleProducerBuilder(IOptions<BootstrapConfiguration> config,
+        public SimpleProducerBuilder(
+                   IOptions<BootstrapConfiguration> config,
                    ILogger<SimpleProducerBuilder> logger)
         {
             if (config is null)

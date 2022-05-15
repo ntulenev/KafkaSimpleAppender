@@ -31,9 +31,12 @@ var builder = new HostBuilder()
       services.AddSingleton<IKafkaSendHandler, KafkaSendHandler>();
       services.AddSingleton<IJsonValidator, JsonValidator>();
       services.AddSingleton<IProducerBuilder, SimpleProducerBuilder>();
+      services.AddSingleton<IFileLoader, FileLoader>();
 
       services.Configure<BootstrapConfiguration>(hostContext.Configuration.GetSection(nameof(BootstrapConfiguration)));
+      services.Configure<FileLoaderConfiguration>(hostContext.Configuration.GetSection(nameof(FileLoaderConfiguration)));
       services.AddSingleton<IValidateOptions<BootstrapConfiguration>, BootstrapConfigurationValidator>();
+      services.AddSingleton<IValidateOptions<FileLoaderConfiguration>, FileLoaderConfigurationValidator>();
 
 
       var logger = new LoggerConfiguration()
