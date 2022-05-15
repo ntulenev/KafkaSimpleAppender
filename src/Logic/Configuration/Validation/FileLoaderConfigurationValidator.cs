@@ -4,8 +4,14 @@ using System.Diagnostics;
 
 namespace Logic.Configuration.Validation
 {
+    /// <summary>
+    /// Validator for <see cref="FileLoaderConfiguration"/>.
+    /// </summary>
     public class FileLoaderConfigurationValidator : IValidateOptions<FileLoaderConfiguration>
     {
+        /// <summary>
+        /// Validates <see cref="FileLoaderConfiguration"/>.
+        /// </summary>
         public ValidateOptionsResult Validate(string name, FileLoaderConfiguration options)
         {
             Debug.Assert(name is not null);

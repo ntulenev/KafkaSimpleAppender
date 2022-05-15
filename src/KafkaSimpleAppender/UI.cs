@@ -1,6 +1,7 @@
-﻿using Logic;
+﻿using System.Text;
+
+using Logic;
 using Models;
-using System.Text;
 
 namespace KafkaSimpleAppender
 {
