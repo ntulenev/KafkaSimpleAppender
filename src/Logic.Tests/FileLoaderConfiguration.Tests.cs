@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using Xunit;
+
+using FluentAssertions;
 
 using Logic.Configuration;
-
-using Xunit;
 
 namespace Logic.Tests
 {
