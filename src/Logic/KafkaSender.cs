@@ -95,8 +95,6 @@ namespace Logic
 
             if (messages is IEnumerable<Message<TKey>> keyMessages)
             {
-                //_logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
-
                 try
                 {
                     using var p = _builder.Build<TKey>();
@@ -105,6 +103,8 @@ namespace Logic
 
                     foreach (var keyMessage in keyMessages)
                     {
+                        _logger.LogInformation("Sending message {@Message} to {@Topic}", keyMessage, topic);
+
                         var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
                         {
                             Key = keyMessage.Key,
@@ -127,13 +127,13 @@ namespace Logic
             }
             else if (messages is IEnumerable<NoKeyMessage> noKeyMessages)
             {
-                //_logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
-
                 try
                 {
                     using var p = _builder.Build<Null>();
                     foreach (var noKeyMessage in noKeyMessages)
                     {
+                        _logger.LogInformation("Sending message {@Message} to {@Topic}", noKeyMessage, topic);
+
                         var dr = await p.ProduceAsync(topic.Name, new Message<Null, string>
                         {
                             Value = noKeyMessage.Payload
