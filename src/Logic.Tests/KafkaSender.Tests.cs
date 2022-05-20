@@ -202,5 +202,24 @@ namespace Logic.Tests
             // Assert
             exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
+
+        [Fact(DisplayName = "KafkaSender cant send unknown message type from collection.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendUnknownMessageFromCollection()
+        {
+            // Arrange
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+            var msg = new TestMessageType("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, new[] { msg }, _ => { }, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentException>();
+        }
     }
 }
