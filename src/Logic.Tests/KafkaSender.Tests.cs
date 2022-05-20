@@ -13,6 +13,7 @@ using Moq;
 using Xunit;
 
 using Models;
+using System.Collections.Generic;
 
 namespace Logic.Tests
 {
@@ -164,6 +165,42 @@ namespace Logic.Tests
             // Assert
             exception.Should().BeNull();
             producerMock.Verify(x => x.ProduceAsync(topic.Name, It.Is<Message<int, string>>(x => x.Value == msg.Payload && x.Key == msg.Key), cts.Token), Times.Once);
+        }
+
+        [Fact(DisplayName = "KafkaSender cant send message collection to null topic.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendCollectionInNullTopic()
+        {
+            // Arrange
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var testMessage = new NoKeyMessage("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(null!, new[] { testMessage }, _ => { }, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+        }
+
+        [Fact(DisplayName = "KafkaSender cant send null message collection.")]
+        [Trait("Category", "Unit")]
+        public async void CantSendNullCollectionMessage()
+        {
+            // Arrange
+            var builderMock = new Mock<IProducerBuilder>(MockBehavior.Strict);
+
+            var sender = new KafkaSender(builderMock.Object, Mock.Of<ILogger<KafkaSender>>());
+            using var cts = new CancellationTokenSource();
+            var topic = new Topic("test");
+
+            // Act
+            var exception = await Record.ExceptionAsync(() => sender.SendAsync(topic, (IEnumerable<NoKeyMessage>)null!, _ => { }, cts.Token));
+
+            // Assert
+            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
         }
     }
 }
