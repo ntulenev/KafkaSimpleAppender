@@ -130,6 +130,9 @@ namespace Logic
                 try
                 {
                     using var p = _builder.Build<Null>();
+
+                    int progressIndex = 0;
+
                     foreach (var noKeyMessage in noKeyMessages)
                     {
                         _logger.LogInformation("Sending message {@Message} to {@Topic}", noKeyMessage, topic);
@@ -140,6 +143,8 @@ namespace Logic
                         }
                         , ct)
                         .ConfigureAwait(false);
+
+                        progressDelegate(++progressIndex);
 
                         _logger.LogInformation("Sending done");
                     }
