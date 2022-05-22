@@ -34,54 +34,15 @@ namespace Logic
 
             if (message is Message<TKey> keyMessage)
             {
-                _logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
-
-                try
-                {
-                    using var p = _builder.Build<TKey>();
-                    var dr = await p.ProduceAsync(topic.Name, new Message<TKey, string>
-                    {
-                        Key = keyMessage.Key,
-                        Value = keyMessage.Payload
-                    }
-                    , ct)
-                    .ConfigureAwait(false);
-
-                    _logger.LogInformation("Sending done");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error on sending message");
-                    throw;
-                }
-
+                await SendAsync(topic, new[] { keyMessage }, delegate { }, ct).ConfigureAwait(false);
             }
             else if (message is NoKeyMessage noKeyMessage)
             {
-                _logger.LogInformation("Sending message {@Message} to {@Topic}", message, topic);
-
-                try
-                {
-                    using var p = _builder.Build<Null>();
-                    var dr = await p.ProduceAsync(topic.Name, new Message<Null, string>
-                    {
-                        Value = noKeyMessage.Payload
-                    }
-                    , ct)
-                    .ConfigureAwait(false);
-
-                    _logger.LogInformation("Sending done");
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error on sending message");
-                    throw;
-                }
+                await SendAsync(topic, new[] { noKeyMessage }, delegate { }, ct).ConfigureAwait(false);
             }
             else
             {
                 _logger.LogError("Not supported message type {Type}", message.GetType().FullName);
-
                 throw new ArgumentException($"Not supported message type {message.GetType().FullName}", nameof(message));
             }
         }
@@ -158,7 +119,6 @@ namespace Logic
             else
             {
                 _logger.LogError("Not supported message type {Type}", messages.GetType().FullName);
-
                 throw new ArgumentException($"Not supported message type {messages.GetType().FullName}", nameof(messages));
             }
         }
