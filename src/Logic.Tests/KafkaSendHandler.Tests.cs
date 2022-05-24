@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +12,7 @@ using Moq;
 using Xunit;
 
 using Models;
+using System.Collections.Generic;
 
 namespace Logic.Tests
 {
@@ -195,8 +197,9 @@ namespace Logic.Tests
 
             var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
             senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
-                                                    cts.Token)).Returns(Task.CompletedTask);
+                                              It.Is<IEnumerable<Message<string>>>(a => a.Single().Key == key && a.Single().Payload == value),
+                                              It.IsAny<Action<int>>(),
+                                              cts.Token)).Returns(Task.CompletedTask);
 
             var sender = new KafkaSendHandler(senderMock.Object,
                                               Mock.Of<IJsonValidator>(MockBehavior.Strict),
@@ -214,8 +217,9 @@ namespace Logic.Tests
             // Assert
             exception.Should().BeNull();
             senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
-                                                    cts.Token), Times.Once);
+                                               It.Is<IEnumerable<Message<string>>>(a => a.Single().Key == key && a.Single().Payload == value),
+                                               It.IsAny<Action<int>>(),
+                                               cts.Token), Times.Once);
         }
 
 
@@ -235,7 +239,8 @@ namespace Logic.Tests
 
             var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
             senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<Message<long>>(a => a.Key == intKey && a.Payload == value),
+                                                    It.Is<IEnumerable<Message<long>>>(a => a.Single().Key == intKey && a.Single().Payload == value),
+                                                    It.IsAny<Action<int>>(),
                                                     cts.Token)).Returns(Task.CompletedTask);
 
             var sender = new KafkaSendHandler(senderMock.Object,
@@ -254,8 +259,9 @@ namespace Logic.Tests
             // Assert
             exception.Should().BeNull();
             senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<Message<long>>(a => a.Key == intKey && a.Payload == value),
-                                                    cts.Token), Times.Once);
+                                               It.Is<IEnumerable<Message<long>>>(a => a.Single().Key == intKey && a.Single().Payload == value),
+                                               It.IsAny<Action<int>>(),
+                                               cts.Token), Times.Once);
         }
 
         [Fact(DisplayName = "KafkaSendHandler cant sends wrong long key message.")]
@@ -292,7 +298,7 @@ namespace Logic.Tests
 
         [Fact(DisplayName = "KafkaSendHandler can send json key message.")]
         [Trait("Category", "Unit")]
-        public async Task CantSendWrongJsonKeyMessage()
+        public async Task CanSendJsonKeyMessage()
         {
             // Arrange
             var topicName = "test";
@@ -305,7 +311,8 @@ namespace Logic.Tests
 
             var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
             senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                        It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                        It.Is<IEnumerable<Message<string>>>(a => a.Single().Key == key && a.Single().Payload == value),
+                                        It.IsAny<Action<int>>(),
                                         cts.Token)).Returns(Task.CompletedTask);
 
             var jsonValidatorMock = new Mock<IJsonValidator>(MockBehavior.Strict);
@@ -327,7 +334,8 @@ namespace Logic.Tests
             // Assert
             exception.Should().BeNull();
             senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<Message<string>>(a => a.Key == key && a.Payload == value),
+                                                    It.Is<IEnumerable<Message<string>>>(a => a.Single().Key == key && a.Single().Payload == value),
+                                                    It.IsAny<Action<int>>(),
                                                     cts.Token), Times.Once);
         }
 
@@ -345,8 +353,9 @@ namespace Logic.Tests
 
             var senderMock = new Mock<IKafkaSender>(MockBehavior.Strict);
             senderMock.Setup(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                        It.Is<NoKeyMessage>(a => a.Payload == value),
-                                        cts.Token)).Returns(Task.CompletedTask);
+                                              It.Is<IEnumerable<NoKeyMessage>>(a => a.Single().Payload == value),
+                                              It.IsAny<Action<int>>(),
+                                              cts.Token)).Returns(Task.CompletedTask);
 
 
             var sender = new KafkaSendHandler(senderMock.Object,
@@ -365,8 +374,9 @@ namespace Logic.Tests
             // Assert
             exception.Should().BeNull();
             senderMock.Verify(x => x.SendAsync(It.Is<Topic>(a => a.Name == topicName),
-                                                    It.Is<NoKeyMessage>(a => a.Payload == value),
-                                                    cts.Token), Times.Once);
+                                               It.Is<IEnumerable<NoKeyMessage>>(a => a.Single().Payload == value),
+                                               It.IsAny<Action<int>>(),
+                                               cts.Token), Times.Once);
         }
     }
 }

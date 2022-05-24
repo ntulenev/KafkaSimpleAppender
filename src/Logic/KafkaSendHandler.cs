@@ -39,49 +39,7 @@ namespace Logic
             _logger.LogDebug("Start handle topic {Topic} for type {KeyType}, key {Key}, payload {Payload}, payload is json :{IsPayloadJson}",
                             topicName, keyType, key, payload, jsonPayload);
 
-            var topic = new Topic(topicName);
-
-            if (jsonPayload)
-            {
-                if (!_validator.IsValid(payload))
-                {
-                    throw new ArgumentException("Message payload is not valid json", nameof(key));
-                }
-            }
-
-            switch (keyType)
-            {
-                case KeyType.String:
-                    {
-                        var message = new Message<string>(key, payload);
-                        await _sender.SendAsync(topic, message, ct);
-                        break;
-                    }
-                case KeyType.JSON:
-                    {
-                        if (!_validator.IsValid(key))
-                        {
-                            throw new ArgumentException("Message key is not valid json", nameof(key));
-                        }
-
-                        var message = new Message<string>(key, payload);
-                        await _sender.SendAsync(topic, message, ct);
-                        break;
-                    }
-                case KeyType.Long:
-                    {
-                        var message = new Message<long>(long.Parse(key), payload);
-                        await _sender.SendAsync(topic, message, ct);
-                        break;
-                    }
-                case KeyType.NotSet:
-                    {
-                        var message = new NoKeyMessage(payload);
-                        await _sender.SendAsync(topic, message, ct);
-                        break;
-                    }
-                default: throw new ArgumentOutOfRangeException(nameof(keyType));
-            }
+            await HandleAsync(topicName, keyType, new[] { new KeyValuePair<string, string>(key, payload) }, jsonPayload, delegate { }, ct).ConfigureAwait(false);
         }
 
         /// <inheritdoc/>
@@ -123,19 +81,20 @@ namespace Logic
                             }
 
                             return new Message<string>(x.Key, x.Value);
-                        });
+                        }).ToList();
+
                         await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 case KeyType.Long:
                     {
-                        var messages = data.Select(x => new Message<long>(long.Parse(x.Key), x.Value));
+                        var messages = data.Select(x => new Message<long>(long.Parse(x.Key), x.Value)).ToList();
                         await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }
                 case KeyType.NotSet:
                     {
-                        var messages = data.Select(x => new NoKeyMessage(x.Value));
+                        var messages = data.Select(x => new NoKeyMessage(x.Value)).ToList();
                         await _sender.SendAsync(topic, messages, progressDelegate, ct);
                         break;
                     }

@@ -43,6 +43,7 @@ namespace Logic
             else
             {
                 _logger.LogError("Not supported message type {Type}", message.GetType().FullName);
+
                 throw new ArgumentException($"Not supported message type {message.GetType().FullName}", nameof(message));
             }
         }
