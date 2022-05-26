@@ -27,29 +27,6 @@ namespace Logic
 
         /// <inheritdoc/>
         /// <exception cref="ArgumentException">Throws if message type is not supported.</exception>
-        public async Task SendAsync<TKey>(Topic topic, MessageBase<TKey> message, CancellationToken ct)
-        {
-            ArgumentNullException.ThrowIfNull(topic);
-            ArgumentNullException.ThrowIfNull(message);
-
-            if (message is Message<TKey> keyMessage)
-            {
-                await SendAsync(topic, new[] { keyMessage }, delegate { }, ct).ConfigureAwait(false);
-            }
-            else if (message is NoKeyMessage noKeyMessage)
-            {
-                await SendAsync(topic, new[] { noKeyMessage }, delegate { }, ct).ConfigureAwait(false);
-            }
-            else
-            {
-                _logger.LogError("Not supported message type {Type}", message.GetType().FullName);
-
-                throw new ArgumentException($"Not supported message type {message.GetType().FullName}", nameof(message));
-            }
-        }
-
-        /// <inheritdoc/>
-        /// <exception cref="ArgumentException">Throws if message type is not supported.</exception>
         public async Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, Action<int> progressDelegate, CancellationToken ct)
         {
             ArgumentNullException.ThrowIfNull(topic);
