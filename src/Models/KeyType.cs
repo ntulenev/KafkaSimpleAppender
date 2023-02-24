@@ -1,10 +1,9 @@
-﻿namespace Models
+﻿namespace Models;
+
+/// <summary>
+/// Kafka message key type.
+/// </summary>
+public enum KeyType
 {
-    /// <summary>
-    /// Kafka message key type.
-    /// </summary>
-    public enum KeyType
-    {
-        String, JSON, Long, NotSet
-    }
+    String, JSON, Long, NotSet
 }

@@ -5,53 +5,52 @@ using Confluent.Kafka;
 
 using Logic.Configuration;
 
-namespace Logic
+namespace Logic;
+
+/// <summary>
+/// Simple builder for Kafka producer
+/// </summary>
+public class SimpleProducerBuilder : IProducerBuilder
 {
     /// <summary>
-    /// Simple builder for Kafka producer
+    /// Creates <see cref="SimpleProducerBuilder"/>.
     /// </summary>
-    public class SimpleProducerBuilder : IProducerBuilder
+    /// <param name="config">Kafka sender configuration.</param>
+    /// <param name="logger">Logger.</param>
+    /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
+    /// /// <exception cref="ArgumentNullException">thows if logger is null.</exception>
+    public SimpleProducerBuilder(
+               IOptions<BootstrapConfiguration> config,
+               ILogger<SimpleProducerBuilder> logger)
     {
-        /// <summary>
-        /// Creates <see cref="SimpleProducerBuilder"/>.
-        /// </summary>
-        /// <param name="config">Kafka sender configuration.</param>
-        /// <param name="logger">Logger.</param>
-        /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
-        /// /// <exception cref="ArgumentNullException">thows if logger is null.</exception>
-        public SimpleProducerBuilder(
-                   IOptions<BootstrapConfiguration> config,
-                   ILogger<SimpleProducerBuilder> logger)
+        if (config is null)
         {
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            var configData = config.Value;
-
-            _config = new()
-            {
-                BootstrapServers = configData.CreateConnectionString(),
-                SecurityProtocol = configData.SecurityProtocol,
-                SaslMechanism = configData.SASLMechanism,
-                SaslUsername = configData.Username,
-                SaslPassword = configData.Password,
-                MessageMaxBytes = configData.MessageMaxBytes
-            };
-
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-
-            _logger.LogDebug("Builder created");
+            throw new ArgumentNullException(nameof(config));
         }
 
-        /// <inheritdoc/>
-        public IProducer<TKey, string> Build<TKey>()
-        {
-            return new ProducerBuilder<TKey, string>(_config).Build();
-        }
+        var configData = config.Value;
 
-        private readonly ProducerConfig _config;
-        private readonly ILogger<SimpleProducerBuilder> _logger;
+        _config = new()
+        {
+            BootstrapServers = configData.CreateConnectionString(),
+            SecurityProtocol = configData.SecurityProtocol,
+            SaslMechanism = configData.SASLMechanism,
+            SaslUsername = configData.Username,
+            SaslPassword = configData.Password,
+            MessageMaxBytes = configData.MessageMaxBytes
+        };
+
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+        _logger.LogDebug("Builder created");
     }
+
+    /// <inheritdoc/>
+    public IProducer<TKey, string> Build<TKey>()
+    {
+        return new ProducerBuilder<TKey, string>(_config).Build();
+    }
+
+    private readonly ProducerConfig _config;
+    private readonly ILogger<SimpleProducerBuilder> _logger;
 }

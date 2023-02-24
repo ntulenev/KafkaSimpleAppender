@@ -12,82 +12,81 @@ using Xunit;
 
 using Logic.Configuration;
 
-namespace Logic.Tests
+namespace Logic.Tests;
+
+public class SimpleProducerBuilderTests
 {
-    public class SimpleProducerBuilderTests
+
+    [Fact(DisplayName = "SimpleProducerBuilder could be created.")]
+    [Trait("Category", "Unit")]
+    public void CouldBeCreated()
     {
-
-        [Fact(DisplayName = "SimpleProducerBuilder could be created.")]
-        [Trait("Category", "Unit")]
-        public void CouldBeCreated()
+        // Arrange
+        var config = new BootstrapConfiguration
         {
-            // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
+            BootstrapServers = new List<string> { "test" }
+        };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+        var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+        configMock.Setup(x => x.Value).Returns(config);
 
-            // Act
-            var exception = Record.Exception(() => new SimpleProducerBuilder(configMock.Object, Mock.Of<ILogger<SimpleProducerBuilder>>()));
+        // Act
+        var exception = Record.Exception(() => new SimpleProducerBuilder(configMock.Object, Mock.Of<ILogger<SimpleProducerBuilder>>()));
 
-            // Assert
-            exception.Should().BeNull();
-        }
+        // Assert
+        exception.Should().BeNull();
+    }
 
-        [Fact(DisplayName = "SimpleProducerBuilder can't be created without logger.")]
-        [Trait("Category", "Unit")]
-        public void CantBeCreatedWithNullLogger()
+    [Fact(DisplayName = "SimpleProducerBuilder can't be created without logger.")]
+    [Trait("Category", "Unit")]
+    public void CantBeCreatedWithNullLogger()
+    {
+        // Arrange
+        var config = new BootstrapConfiguration
         {
-            // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
+            BootstrapServers = new List<string> { "test" }
+        };
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+        var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+        configMock.Setup(x => x.Value).Returns(config);
 
-            // Act
-            var exception = Record.Exception(() => new SimpleProducerBuilder(configMock.Object, null!));
+        // Act
+        var exception = Record.Exception(() => new SimpleProducerBuilder(configMock.Object, null!));
 
-            // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
-        }
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+    }
 
-        [Fact(DisplayName = "SimpleProducerBuilder can't be created without config.")]
-        [Trait("Category", "Unit")]
-        public void CantBeCreatedWithNullConfig()
+    [Fact(DisplayName = "SimpleProducerBuilder can't be created without config.")]
+    [Trait("Category", "Unit")]
+    public void CantBeCreatedWithNullConfig()
+    {
+        // Act
+        var exception = Record.Exception(() => new SimpleProducerBuilder(null!, Mock.Of<ILogger<SimpleProducerBuilder>>()));
+
+        // Assert
+        exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
+    }
+
+    [Fact(DisplayName = "SimpleProducerBuilder could be created.")]
+    [Trait("Category", "Unit")]
+    public void CouldBuildProducer()
+    {
+        // Arrange
+        var config = new BootstrapConfiguration
         {
-            // Act
-            var exception = Record.Exception(() => new SimpleProducerBuilder(null!, Mock.Of<ILogger<SimpleProducerBuilder>>()));
+            BootstrapServers = new List<string> { "test" }
+        };
 
-            // Assert
-            exception.Should().NotBeNull().And.BeOfType<ArgumentNullException>();
-        }
+        var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
+        configMock.Setup(x => x.Value).Returns(config);
 
-        [Fact(DisplayName = "SimpleProducerBuilder could be created.")]
-        [Trait("Category", "Unit")]
-        public void CouldBuildProducer()
-        {
-            // Arrange
-            var config = new BootstrapConfiguration
-            {
-                BootstrapServers = new List<string> { "test" }
-            };
+        var builder = new SimpleProducerBuilder(configMock.Object, Mock.Of<ILogger<SimpleProducerBuilder>>());
 
-            var configMock = new Mock<IOptions<BootstrapConfiguration>>(MockBehavior.Strict);
-            configMock.Setup(x => x.Value).Returns(config);
+        // Act
+        var result = builder.Build<string>();
 
-            var builder = new SimpleProducerBuilder(configMock.Object, Mock.Of<ILogger<SimpleProducerBuilder>>());
-
-            // Act
-            var result = builder.Build<string>();
-
-            // Assert
-            result.Should().NotBeNull();
-        }
+        // Assert
+        result.Should().NotBeNull();
     }
 }

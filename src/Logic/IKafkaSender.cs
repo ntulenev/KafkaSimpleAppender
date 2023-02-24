@@ -1,19 +1,18 @@
 ﻿using Models;
 
-namespace Logic
+namespace Logic;
+
+/// <summary>
+/// Kafka sender.
+/// </summary>
+public interface IKafkaSender
 {
     /// <summary>
-    /// Kafka sender.
+    /// Sends messages to Kafka topic.
     /// </summary>
-    public interface IKafkaSender
-    {
-        /// <summary>
-        /// Sends messages to Kafka topic.
-        /// </summary>
-        /// <typeparam name="TKey">Message Key type.</typeparam>
-        /// <param name="topic">Kafka topic.</param>
-        /// <param name="message">Kafka messages.</param>
-        /// <param name="ct">Cancellation token.</param>
-        public Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, Action<int> progressDelegate, CancellationToken ct);
-    }
+    /// <typeparam name="TKey">Message Key type.</typeparam>
+    /// <param name="topic">Kafka topic.</param>
+    /// <param name="message">Kafka messages.</param>
+    /// <param name="ct">Cancellation token.</param>
+    public Task SendAsync<TKey>(Topic topic, IEnumerable<MessageBase<TKey>> messages, Action<int> progressDelegate, CancellationToken ct);
 }
