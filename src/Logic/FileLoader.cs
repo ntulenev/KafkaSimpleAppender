@@ -12,16 +12,13 @@ namespace Logic;
 public class FileLoader : IFileLoader
 {
     /// <summary>
-    /// Creates <see cref="FileLoader"/>.
+    /// Initializes a new instance of the FileLoader class with the specified configuration options.
     /// </summary>
-    /// <param name="config">Loader configuration.</param>
-    /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
+    /// <param name="config">The configuration options for the FileLoader.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the config parameter is null.</exception>
     public FileLoader(IOptions<FileLoaderConfiguration> config)
     {
-        if (config is null)
-        {
-            throw new ArgumentNullException(nameof(config));
-        }
+        ArgumentNullException.ThrowIfNull(config);
 
         var configData = config.Value;
 
@@ -30,7 +27,7 @@ public class FileLoader : IFileLoader
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Thows if file is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the file is null.</exception>
     public async Task<IReadOnlyCollection<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(filePath);
