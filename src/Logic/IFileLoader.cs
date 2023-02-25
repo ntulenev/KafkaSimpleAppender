@@ -1,15 +1,16 @@
 ﻿namespace Logic;
 
 /// <summary>
-/// Loader for file data.
+/// Interface for loading files as a key-value pairs collection.
 /// </summary>
 public interface IFileLoader
 {
     /// <summary>
-    /// Loads message collection from file.
+    /// Loads a file asynchronously and returns a collection of key-value pairs.
     /// </summary>
-    /// <param name="filePath">File path.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>Key/Value messages collection</returns>
+    /// <param name="filePath">The path to the file to load.</param>
+    /// <param name="ct">A cancellation token that can be used to cancel the operation.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result is a read-only collection 
+    /// of key-value pairs from the content of the file.</returns>
     public Task<IReadOnlyCollection<KeyValuePair<string, string>>> LoadAsync(string filePath, CancellationToken ct);
 }
