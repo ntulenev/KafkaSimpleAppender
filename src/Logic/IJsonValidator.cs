@@ -6,9 +6,9 @@
 public interface IJsonValidator
 {
     /// <summary>
-    /// Checks if string is json.
+    /// Validates the specified string
     /// </summary>
-    /// <param name="value">String for checking.</param>
-    /// <returns>true if string is json.</returns>
+    /// <param name="value">The string to be validated.</param>
+    /// <returns>Returns true if the string is valid JSON string, otherwise, false.</returns>
     public bool IsValid(string value);
 }
