@@ -21,6 +21,7 @@ namespace KafkaSimpleAppender
         {
             CheckUIType();
         }
+
         private void rbSingle_CheckedChanged(object sender, EventArgs e)
         {
             CheckUIType();
@@ -173,7 +174,6 @@ namespace KafkaSimpleAppender
 
         private readonly IKafkaSendHandler _hander;
         private readonly IFileLoader _fileLoader;
-
         private string _fileName = null!;
         private IReadOnlyCollection<KeyValuePair<string, string>> _fileMessages = null!;
     }
