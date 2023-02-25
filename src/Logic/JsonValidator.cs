@@ -5,22 +5,22 @@ using Newtonsoft.Json.Linq;
 namespace Logic;
 
 /// <summary>
-/// Json Validator.
+/// Provides functionality to validate a JSON string.
 /// </summary>
 public class JsonValidator : IJsonValidator
 {
     /// <summary>
-    /// Creates <see cref="JsonValidator"/>.
+    /// Initializes a new instance of the <see cref="JsonValidator"/> class.
     /// </summary>
-    /// <param name="logger">logger.</param>
-    /// <exception cref="ArgumentNullException">Throws if logger is null.</exception>
+    /// <param name="logger">The logger to use for logging.</param>
+    /// <exception cref="ArgumentNullException">Thrown when the logger is null.</exception>
     public JsonValidator(ILogger<JsonValidator> logger)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">Thows if value is null.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the value is null.</exception>
     public bool IsValid(string value)
     {
         ArgumentNullException.ThrowIfNull(value);
