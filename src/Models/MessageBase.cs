@@ -1,22 +1,22 @@
 ﻿namespace Models;
 
 /// <summary>
-/// Base class for any Kafka message.
+/// Represents the base class for a message with a specific payload.
 /// </summary>
-/// <typeparam name="TKey">Key marker type.</typeparam>
+/// <typeparam name="TKey">The type of the key.</typeparam>
 public abstract class MessageBase<TKey>
 {
     /// <summary>
-    /// Message payload.
+    /// Gets the payload of the message.
     /// </summary>
     public string Payload { get; }
 
     /// <summary>
-    /// Creates Message.
+    /// Initializes a new instance of the <see cref="MessageBase{TKey}"/> class with the specified payload.
     /// </summary>
-    /// <param name="payload">Message payload</param>
-    /// <exception cref="ArgumentNullException">Throws if payload is null.</exception>
-    /// <exception cref="ArgumentException">Throws if payload is empty.</exception>
+    /// <param name="payload">The payload of the message.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="payload"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="payload"/> is empty or consists of whitespaces.</exception>
     public MessageBase(string payload)
     {
         if (payload is null)
