@@ -8,25 +8,22 @@ using Logic.Configuration;
 namespace Logic;
 
 /// <summary>
-/// Simple builder for Kafka producer
+/// Represents a simple producer builder that implements the <see cref="IProducerBuilder"/> interface.
 /// </summary>
 public class SimpleProducerBuilder : IProducerBuilder
 {
     /// <summary>
-    /// Creates <see cref="SimpleProducerBuilder"/>.
+    /// Initializes a new instance of the <see cref="SimpleProducerBuilder"/> class with the 
+    /// specified bootstrap configuration.
     /// </summary>
-    /// <param name="config">Kafka sender configuration.</param>
-    /// <param name="logger">Logger.</param>
-    /// <exception cref="ArgumentNullException">Thows if config is null.</exception>
-    /// /// <exception cref="ArgumentNullException">thows if logger is null.</exception>
+    /// <param name="config">The bootstrap configuration.</param>
+    /// <param name="logger">The logger to be used for logging.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="config"/> or <paramref name="logger"/> is null.</exception>
     public SimpleProducerBuilder(
                IOptions<BootstrapConfiguration> config,
                ILogger<SimpleProducerBuilder> logger)
     {
-        if (config is null)
-        {
-            throw new ArgumentNullException(nameof(config));
-        }
+        ArgumentNullException.ThrowIfNull(config);
 
         var configData = config.Value;
 
