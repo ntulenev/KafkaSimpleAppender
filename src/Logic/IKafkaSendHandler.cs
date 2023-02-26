@@ -29,7 +29,7 @@ public interface IKafkaSendHandler
     public Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, Action<int> progressDelegate, CancellationToken ct);
 
     /// <summary>
-    /// Valid Key types.
+    /// Gets the valid key types that can be used for the Kafka messages.
     /// </summary>
     public IEnumerable<KeyType> ValidKeyTypes { get; }
 }
