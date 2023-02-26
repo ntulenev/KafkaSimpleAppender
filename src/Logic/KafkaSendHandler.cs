@@ -5,19 +5,20 @@ using Microsoft.Extensions.Logging;
 namespace Logic;
 
 /// <summary>
-/// Logic handler.
+/// A Kafka message send handler that sends messages to a Kafka topic.
 /// </summary>
 public class KafkaSendHandler : IKafkaSendHandler
 {
+    /// <inheritdoc/>
     public IEnumerable<KeyType> ValidKeyTypes { get; }
 
     /// <summary>
-    /// Creates <see cref="KafkaSendHandler"/>.
+    /// Initializes a new instance of the <see cref="KafkaSendHandler"/> class with the specified sender, validator, and logger.
     /// </summary>
-    /// <param name="sender">Sender contract.</param>
-    /// <param name="validator">Json validation contract.</param>
-    /// <param name="logger">logger.</param>
-    /// <exception cref="ArgumentNullException">Throws if sender or validator or logger is null.</exception>
+    /// <param name="sender">The Kafka message sender.</param>
+    /// <param name="validator">The JSON validator.</param>
+    /// <param name="logger">The logger.</param>
+    /// <exception cref="ArgumentNullException">Thrown when any of the parameters is null.</exception>
     public KafkaSendHandler(IKafkaSender sender,
                             IJsonValidator validator,
                             ILogger<KafkaSendHandler> logger)
@@ -32,8 +33,9 @@ public class KafkaSendHandler : IKafkaSendHandler
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentException">Throws if payload or key is not json.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the data parameter is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the message payload or key is not a valid JSON string.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the key type is not a valid <see cref="KeyType"/> value.</exception>
     public async Task HandleAsync(string topicName, KeyType keyType, string key, string payload, bool jsonPayload, CancellationToken ct)
     {
         _logger.LogDebug("Start handle topic {Topic} for type {KeyType}, key {Key}, payload {Payload}, payload is json :{IsPayloadJson}",
@@ -43,9 +45,9 @@ public class KafkaSendHandler : IKafkaSendHandler
     }
 
     /// <inheritdoc/>
-    /// <exception cref="ArgumentNullException">If data is not set.</exception>
-    /// <exception cref="ArgumentException">Throws if payload or key is not json.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Throws if key type is not supported.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when the data parameter is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when the message payload or key is not a valid JSON string.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when the key type is not a valid <see cref="KeyType"/> value.</exception>
     public async Task HandleAsync(string topicName, KeyType keyType, IEnumerable<KeyValuePair<string, string>> data, bool jsonPayload, Action<int> progressDelegate, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(data);
