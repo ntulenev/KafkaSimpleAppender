@@ -19,15 +19,8 @@ public abstract class MessageBase<TKey>
     /// <exception cref="ArgumentException"><paramref name="payload"/> is empty or consists of whitespaces.</exception>
     public MessageBase(string payload)
     {
-        if (payload is null)
-        {
-            throw new ArgumentNullException(nameof(payload), "Topic name is not set.");
-        }
-
-        if (string.IsNullOrEmpty(payload))
-        {
-            throw new ArgumentException("The topic name cannot be empty or consist of whitespaces.", nameof(payload));
-        }
+        ArgumentNullException.ThrowIfNull(payload);
+        ArgumentNullException.ThrowIfNullOrEmpty(payload);
 
         Payload = payload;
     }
