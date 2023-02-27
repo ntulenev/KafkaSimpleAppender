@@ -53,7 +53,7 @@ public class TopicTests
     public void CantCreateLongTopicName()
     {
         // Arrange
-        var name = new string('x', 250);
+        var name = new string('x', 256);
 
         // Act
         var exception = Record.Exception(() => new Topic(name));

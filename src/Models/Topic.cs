@@ -1,60 +1,56 @@
-﻿using System.Text.RegularExpressions;
-
-namespace Models;
+﻿namespace Models;
 
 /// <summary>
-/// Apache Kaka topic.
+/// Represents a Kafka topic name.
 /// </summary>
 public class Topic
 {
     /// <summary>
-    /// Topic name.
+    /// Initializes a new instance of the <see cref="Topic"/> class with the specified name.
     /// </summary>
-    public string Name { get; }
-
-    /// <summary>
-    /// Creates <see cref="Topic"/>.
-    /// </summary>
-    /// <param name="name">Topic name.</param>
-    /// <exception cref="ArgumentNullException">Thows if name is null.</exception>
-    /// <exception cref="ArgumentException">Throws if name is not valid for kafka topic.</exception>
+    /// <param name="name">The name of the Kafka topic.</param>
+    /// <exception cref="ArgumentNullException">Thrown if the topic name is null</exception>
+    /// <exception cref="ArgumentException">Thrown if the topic name is empty, or has only spaces, or name is tool longer, or contains invalid characters.</exception>
     public Topic(string name)
     {
-        ValidateName(name);
-        Name = name;
-    }
+        ArgumentNullException.ThrowIfNull(name);
 
-    private static void ValidateName(string name)
-    {
-        if (name is null)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentNullException(nameof(name), "Topic name is not set.");
-        }
-
-        if (string.IsNullOrEmpty(name))
-        {
-            throw new ArgumentException("The topic name cannot be empty or consist of whitespaces.", nameof(name));
-        }
-
-        if (name.Any(character => char.IsWhiteSpace(character)))
-        {
-            throw new ArgumentException("The topic name cannot contain whitespaces.", nameof(name));
+            throw new ArgumentException("Topic name cannot be null or empty", nameof(name));
         }
 
         if (name.Length > MAX_TOPIC_NAME_LENGTH)
         {
-            throw new ArgumentException("The name of a topic is too long.", nameof(name));
+            throw new ArgumentException($"Topic name cannot be longer than {MAX_TOPIC_NAME_LENGTH} characters", nameof(name));
         }
 
-        if (!_topicNameCharacters.IsMatch(name))
+        if (!IsValidTopicName(name))
         {
-            throw new ArgumentException("Incorrect topic name. The topic name may consist of characters 'a' to 'z', 'A' to 'Z', digits, and minus signs.", nameof(name));
+            throw new ArgumentException("Topic name contains invalid characters", nameof(name));
         }
+
+        _name = name;
     }
 
-    private static readonly Regex _topicNameCharacters = new(
-        "^[a-zA-Z0-9\\-]*$",
-        RegexOptions.Compiled);
+    /// <summary>
+    /// Gets the name of the Kafka topic.
+    /// </summary>
+    public string Name => _name;
 
-    private const int MAX_TOPIC_NAME_LENGTH = 249;
+    private static bool IsValidTopicName(string name)
+    {
+        foreach (char c in name)
+        {
+            if (!char.IsLetterOrDigit(c) && c != '-' && c != '_' && c != '.')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private const int MAX_TOPIC_NAME_LENGTH = 255;
+    private readonly string _name;
 }
